@@ -1,0 +1,67 @@
+THINGS TO DO:
+
+1) Allow for the implementation of boundary conditions from different 
+processors.
+- The idea here is to allow the system.py to call grid.py to collect the 
+  relevant boundary condition. i.e. grid knows about the discretisation of the 
+  domain, but system does not. Therefore system must request the correct values
+  for the boundary. --- Perhaps not possible to completely separate this 
+  functionality. If so, must evaluate if domain splitting using grid.py is a
+  good idea.
+  
+2) Currently the code stores the domain for each timeslice. When the domain is not changing
+this is not needed. Code could be introduced to reduce this overhead
+
+3) The most significant delay in error calculation is the construction of the mapping.
+Either write code to store this calculation, or find a better algorithm (preferably one
+that does not require input from the user).
+
+4) Using the HDF chunking algorithm to allow all processes to output data when
+using mpi.
+
+5) change all current systems to use free_data
+
+6) implement abstract base classes for solvers, systems, grids, timeslices.
+
+7) implement intermediate steps within solver? Doesn't this require knowledge of the boundary conditions? So perhaps this should be done in system?
+
+8) sort out symantic confusion of timeslices. They are used both to store data at a slice and derivatives at a slice. In particular the time contained in slice used during RK4 evaluation is different from the time passed to the evaluate method. This could be a big source of confustion and should be changed.
+
+9) Talk to Jorg about move the timestep calculation to IBVP. System can provide information about the egienvalues. In Jorg's words, "System shouldn't know anything about the numerics".
+
+10) Change RK routines to access a list of the derivatives rather than a tslice.
+Also change evolve routines to return a list of the derivatives rather than
+a tslice.
+
+11) grid objects changed to no longer subclass nd.array and use mesh type arrays for
+multi dimensional processing.
+
+12) Move cfl from ibvp to systems.
+
+13) remove extronious references to time in ibvp, system classes and solvers.
+Similary, come up with some way to address the issue of multiple, conflicting, times
+parameters being passed to system evolute routines.
+
+14) separate the matplotlib dependent modules from other code. Imports of
+mathplot lib and pylab break on vulcan.
+
+--) Remove linking of system and solver done in ibvp.py. This can be done at construction time.
+
+--) Remove system dependent data types from simulation HDF
+
+--) Documents interdependencies on hdf files between simulate.py and the system file being run. Included documentation in scripts that require hdf files. Mention that the hdf file must have been constructed using
+the actions.hdf_output module.
+
+--) Move cfl condition from ibvp to system files
+--) Move tau settings to system files (keyword argument)
+--) The __init__ method of Sim object contains code to produce a list of the
+indices of stored timeslices. This is currently very inefficient as it is
+effectively two for loops followed by a sort. There are two ways to fix this.
+(i) the list of indices is already in lexigraphic order, perhaps there is some
+niffty algorithm to convert ints in lexographic order to ints in numerical
+order. (ii) write a SimOutputType that stores a list of all indices as they are
+writen out to the hdf file and then puts this list into a dataset when the file
+is closed. 
+
+SHORT TERM
+1) update advect and wave for free_data

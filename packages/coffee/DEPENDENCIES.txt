@@ -1,0 +1,7 @@
+fitsio c library
+chealpix c library
+
+mpich or open-mpi
+pyFFTW
+gnuplot + appropriate terminal if needed.
+hdf library

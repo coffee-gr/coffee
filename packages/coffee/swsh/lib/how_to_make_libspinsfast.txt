@@ -1,0 +1,5 @@
+First compile spinsfast as described in the package, remember to set the build
+system variable.
+
+Then use this
+gcc -shared -Wl,-soname,libspinsfast.so.1 -lcfitsio -lfftw3 -lchealpix -lgsl -lgslcblas -o libspinsfast.so.1.0.1 ../spinsfastpy/spinsfast_rev90/obj/*.o

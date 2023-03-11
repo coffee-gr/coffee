@@ -1,0 +1,5 @@
+gnuplot-py==1.8
+h5py==2.8.0
+matplotlib==2.2.3
+mpi4py==3.0.0
+PyFFTW3==0.2.1

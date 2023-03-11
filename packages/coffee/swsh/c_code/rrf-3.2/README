@@ -1,0 +1,67 @@
+
+
+            Root-rational-fraction program package
+
+                   Version 3.2 -- June 2009
+
+
+This set of routines performs arithmetic on numbers whose squares
+are rational fractions (possibly negative, so that the numbers may
+be pure imaginary).  In particular, the theory of angular momentum
+yields various numbers of this form (the Wigner 3j, 6j and 9j
+symbols) and routines are provided for calculating them.
+
+The routines can be used as a library and called by a suitable Fortran
+program. Details of the routines are given in the documentation, which
+is in the doc directory in the form of html files. Alternatively,
+there is an interactive calculator program, rrfcalc, that reads input
+from the terminal a line at a time and treats it as commands for a
+calculator working in Reverse Polish Notation. The commands available
+are described in rrfcalc.html.
+
+To extract the files, put the compressed tarfile in a suitable
+directory, and type
+gunzip rrf-3.2.tar
+tar xvf rrf-3.2.tar
+The files will be extracted into a new subdirectory called rrf-3.2.
+Change to this directory, check the Makefile to specify the Fortran 90
+compiler that you wish to use, and run "make". If successful, the rrfcalc
+executable will be found in the bin directory. If possible, use a
+compiler that supports 16-byte (quad precision) real variables and
+8-byte integers.
+
+To test the interactive calculator, run "make test"; to test the
+program more extensively, use "make test3j", "make test6j" and "make
+test9j". The latter three tests take data files from the tests
+directory and send their output there. The data files can be edited to
+extend the scope of the tests, but this can increase the computation
+time substantially and can produce very large output files.
+
+The program has been fairly thoroughly tested in its original form and
+has been used successfully on a number of problems, but some bugs
+doubtless remain. I should appreciate being told about them. The
+present version is a Fortran 90 version, and has been tested against
+the original version and using the test programs provided. The program
+is made available for use without any warranty as to its reliability
+or accuracy, and all use must be at the user's own risk. The package
+may be made available to third parties, provided that no charge is
+made other than a nominal handling charge, and provided that all files
+are exactly in the original form, without any enhancements or other
+modifications. Any bug reports or suggestions for improvement may be
+sent to me at the address below. I would particularly welcome
+information about any difficulties that may be encountered in porting
+the program to other platforms.
+
+
+
+
+
+                                      A. J. Stone
+                                      University Chemical Laboratory
+                                      Lensfield Road
+                                      Cambridge CB2 1EW,
+				      U.K.
+
+                                      email: ajs1@cam.ac.uk
+				      
+				      June 2009
