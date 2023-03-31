@@ -4,6 +4,7 @@ import numpy as np
 # import our modules
 from coffee.tslices import tslices
 from coffee.system import System
+from coffee.backend import be
 
 class TwoDadvection(System):
 
@@ -38,10 +39,10 @@ class TwoDadvection(System):
         return self.centralBump(t0,r)
 
     def boundary(self, t, Psi):
-        return np.zeros_like(Psi.data[0])
+        return be.zeros_like(Psi.data[0])
     
     def first_right(self,t,Psi):
-        return np.zeros_like(Psi.domain.axes[0])
+        return be.zeros_like(Psi.domain.axes[0])
         
     def first_left(self,t,Psi):
         return (0.0,0.0)
@@ -62,13 +63,13 @@ class TwoDadvection(System):
         ########################################################################
         # Calculate derivatives and impose boundary conditions
         ########################################################################
-        Dxf = np.apply_along_axis(
+        Dxf = be.apply_along_axis(
             lambda x:self.Dx(x, dx),
             0, 
             f0
             )
 
-        Dyf = np.apply_along_axis(
+        Dyf = be.apply_along_axis(
             lambda y:self.Dy(y,dy),
             1,
             f0
@@ -199,10 +200,10 @@ class TwoDadvection(System):
         phimid = int(phi.shape[0]/2)
         r_mesh, phi_mesh = grid.meshes
         
-        rv = np.exp(-20*(r_mesh - r[rmid])**2)*\
-            np.exp(-5*(phi_mesh - phi[phimid])**2)
+        rv = be.exp(-20*(r_mesh - r[rmid])**2)*\
+            be.exp(-5*(phi_mesh - phi[phimid])**2)
         if rank == 0:
             rtslice = tslices.TimeSlice([rv],grid,t0)
         else:
-            rtslice = tslices.TimeSlice([np.zeros_like(rv)],grid,t0)
+            rtslice = tslices.TimeSlice([be.zeros_like(rv)],grid,t0)
         return rtslice
