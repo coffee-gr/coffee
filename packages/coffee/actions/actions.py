@@ -37,7 +37,7 @@ class Prototype(object):
         self.stop = stop
         self.start = start
         if thits is not None:
-            self.thits = np.asarray(thits)
+            self.thits = be.asarray(thits)
         else:
             self.thits = None
         self.thits_toll = thits_toll
@@ -62,7 +62,7 @@ class Prototype(object):
             and self.start<=u.time<=self.stop
         if self.thits is not None:
             test = test and \
-                (np.absolute(u.time - self.thits) < self.thits_toll).any()
+                (be.absolute(u.time - self.thits) < self.thits_toll).any()
         return test
 
     def __call__(self, it, u):
@@ -117,7 +117,7 @@ class BlowupCutoff(Prototype):
             True if there is a component greater than the cutoff.
         """
         for component in u.fields:
-            if np.any(np.abs(component) >= self.cutoff):
+            if be.any(be.abs(component) >= self.cutoff):
                 return True
         return False
 

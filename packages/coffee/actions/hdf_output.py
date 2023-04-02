@@ -222,7 +222,7 @@ class SimOutput(Prototype):
         
         def __call__(self,it,u):
             dg = self.data_group
-            dg[it] = np.array([u.time])
+            dg[it] = be.array([u.time])
             super(SimOutput.Times,self).__call__(it,u)
          
     class TimeStep(SimOutputType):
@@ -236,7 +236,7 @@ class SimOutput(Prototype):
         
         def __call__(self,it,u):
             dg = self.data_group
-            dg[it] = np.array([self.parent.system.timestep(u)])
+            dg[it] = be.array([self.parent.system.timestep(u)])
             super(SimOutput.TimeStep,self).__call__(it,u)   
       
     class Domains(SimOutputType):
@@ -261,7 +261,7 @@ class SimOutput(Prototype):
             dg = self.data_group
             axes = u.domain.axes
             axes_shape = tuple([axis.size for axis in axes])
-            axes_flat = np.empty(
+            axes_flat = be.empty(
                 (reduce(lambda x,y: x+y, axes_shape),),
                 dtype=u.domain.axes[0].dtype
                 )
@@ -336,11 +336,11 @@ class SimOutput(Prototype):
         def setup(self, parent):
             super(SimOutput.System,self).setup(parent)
             g = self.data_group.group
-            psystem = np.asarray(repr(parent.system)).astype('S')
-            pgrid = np.asarray(repr(parent.domain)).astype('S')
-            psolver = np.asarray(repr(parent.solver)).astype('S')
-            pcmp = np.asarray(repr(parent.cmp_)).astype('S')
-            pnumvar = np.asarray(repr(parent.system.numvar)).astype('S')
+            psystem = be.asarray(repr(parent.system)).astype('S')
+            pgrid = be.asarray(repr(parent.domain)).astype('S')
+            psolver = be.asarray(repr(parent.solver)).astype('S')
+            pcmp = be.asarray(repr(parent.cmp_)).astype('S')
+            pnumvar = be.asarray(repr(parent.system.numvar)).astype('S')
 
             g.require_dataset(sysDTypes['system'],\
                 psystem.shape, psystem.dtype, \

@@ -6,7 +6,7 @@ import numpy as np
 
 from coffee.io import simulation_data as sd
 
-np.set_printoptions(threshold=np.inf)
+be.set_printoptions(threshold=be.inf)
 
 parser = argparse.ArgumentParser(description=\
 """This program compares the contents of two hdf files as produced by coffee."""
@@ -52,9 +52,9 @@ for f_sim in first_sims:
     while index < len(f_datagroup):
         f_data = f_datagroup[index][()]
         s_data = s_datagroup[index][()]
-        if not np.array_equal(f_data, s_data):
+        if not be.array_equal(f_data, s_data):
             for i in range(len(f_data)):
-                if not np.array_equal(f_data[i], s_data[i]):
+                if not be.array_equal(f_data[i], s_data[i]):
                     print("Difference in component %s"%repr(i))
                     for j in range(len(f_data[i])):
                         if f_data[i][j] != s_data[i][j]:

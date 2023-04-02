@@ -60,10 +60,10 @@ def error(args):
             add_domain = sims[-1].domain[add_index]
             add_range = None
             #scrif = sims[-1].scrif[baIndex]
-            #scrifIndex = np.nonzero(np.absolute(scrif)==\
-            #    np.min(np.absolute(scrif)))[0][0]
-            #scrifDomain = np.array([baDomain[scrifIndex],baDomain[scrifIndex]])
-            #scrifRange = np.array([-50,0])
+            #scrifIndex = be.nonzero(be.absolute(scrif)==\
+            #    be.min(be.absolute(scrif)))[0][0]
+            #scrifDomain = be.array([baDomain[scrifIndex],baDomain[scrifIndex]])
+            #scrifRange = be.array([-50,0])
             additional_data +=[(data, index, data_dg, domain)]
         
         # Producing plots
@@ -83,15 +83,15 @@ def error(args):
                 name = sim.name
                 if args.o:
                     if args.e:
-                        plot_data += [Gnuplot.Data(domain[0],np.log2(error), \
+                        plot_data += [Gnuplot.Data(domain[0],be.log2(error), \
                             title = name, filename = "%s-e-exa_%i_%f.gnup"%\
                                 (args.ofile_base, phi_index, args.t))]
                     else:
-                        plot_data += [Gnuplot.Data(domain[0],np.log2(error), \
+                        plot_data += [Gnuplot.Data(domain[0],be.log2(error), \
                           title = name, filename = "%s-e-num_%i_%f.gnup"%\
                               (args.ofile_base, phi_index, args.t))]
                 else:
-                    plot_data += [Gnuplot.Data(domain[0],np.log2(error), \
+                    plot_data += [Gnuplot.Data(domain[0],be.log2(error), \
                         title = name)]
             if (
                 "scri" in 
@@ -211,7 +211,7 @@ def _plot(args):
                     y = group[i]
                     g.title('Simulation %s at time %f'%(sim.name,times[i])) 
                     plotItems = []
-                    for j, row in enumerate(np.atleast_2d(y.value)):
+                    for j, row in enumerate(be.atleast_2d(y.value)):
                         if args.o and args.frame is None:
                             plotItems +=[Gnuplot.Data(domains[i],\
                                row, \

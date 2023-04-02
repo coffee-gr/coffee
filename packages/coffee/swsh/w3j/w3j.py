@@ -54,14 +54,14 @@ def valid(j1, j2, j3, m1, m2, m3):
         2 * j3 % 1 < NUMERICAL_ERROR_TOLERANCE):
         return False
     #Are the ms in the correct arange?
-    js = np.array([
-        np.arange(-j1, j1+1, 1), 
-        np.arange(-j2, j2+1, 1), 
-        np.arange(-j3, j3+1, 1)
+    js = be.array([
+        be.arange(-j1, j1+1, 1), 
+        be.arange(-j2, j2+1, 1), 
+        be.arange(-j3, j3+1, 1)
         ])
-    ms = np.array([m1, m2, m3])
+    ms = be.array([m1, m2, m3])
     for i in range(0,3):
-      js[i] = np.absolute(js[i] - ms[i])
+      js[i] = be.absolute(js[i] - ms[i])
     if not(any(js[0] < NUMERICAL_ERROR_TOLERANCE) and 
         any(js[1] < NUMERICAL_ERROR_TOLERANCE) and 
         any(js[2] < NUMERICAL_ERROR_TOLERANCE)): 
@@ -277,7 +277,7 @@ class W3jBen(object):
         )
         
         def _hashRegge_check(result, func, arguments):
-            a = np.fromiter(result, dtype=typeDict['ulonglong'], count=3)
+            a = be.fromiter(result, dtype=typeDict['ulonglong'], count=3)
             return a
 
         self._cg.hashRegge.restype = ctypes.POINTER(ctypes.c_ulonglong)
@@ -346,8 +346,8 @@ class W3jBen(object):
             where i is 1, 2 or 3.")
         if trivial_zero(j1, j2, j3, m1, m2, m3):
             return 0.0
-        js = np.array([j1,j2,j3], dtype=typeDict['double'])
-        ms = np.array([m1,m2,m3], dtype=typeDict['double'])
+        js = be.array([j1,j2,j3], dtype=typeDict['double'])
+        ms = be.array([m1,m2,m3], dtype=typeDict['double'])
         i = self._cg.hashRegge(js, ms)
         regge_hash = i[0]
         odd_flip = i[1]
@@ -404,8 +404,8 @@ class W3jBen(object):
             m3 is one of -j3, -j3+1, ..., 0, ..., j3-1, j3.
 
         """
-        ms = np.array([m1, m2, m3], dtype=typeDict['double'])
-        js = np.array([j1_min, j2, j3], dtype=typeDict['double'])
+        ms = be.array([m1, m2, m3], dtype=typeDict['double'])
+        js = be.array([j1_min, j2, j3], dtype=typeDict['double'])
         for i in range(0, j1_num):
             array = self._cg.hashRegge(js, ms)
             regge_hash = array[0]
@@ -449,11 +449,11 @@ class W3jBen(object):
             `j1` entry. The int is the number of `j1` entries, that is the
             length of the list.
         """
-        jms = np.array([j2, j3, m1, m2, m3], dtype=typeDict['double'])
+        jms = be.array([j2, j3, m1, m2, m3], dtype=typeDict['double'])
         j1_max = j2 + j3
         j1_min = max(math.fabs(j2 - j3), math.fabs(m1))
         j1_num = int((j1_max - j1_min + 1)//1)
-        w3j_arr = np.empty((j1_num,), dtype=typeDict['double'])
+        w3j_arr = be.empty((j1_num,), dtype=typeDict['double'])
         self._cg.calcCoeff(jms, w3j_arr)
         return w3j_arr, j1_min, j1_num, j1_max
 
@@ -622,8 +622,8 @@ class W3jBoris(object):
         if trivial_zero(j1, j2, j3, m1, m2, m3): return 0.0
         if self._cplCw3jStruct_ptr is None:
             raise Exception("Precalculation of the symbols has not been done")
-        js = np.array([j1,j2,j3], dtype=typeDict["double"])
-        ms = np.array([m1,m2,m3], dtype=typeDict["double"])
+        js = be.array([j1,j2,j3], dtype=typeDict["double"])
+        ms = be.array([m1,m2,m3], dtype=typeDict["double"])
         rv = self._cg.getW3jPrecalc(js, ms, self._cplCw3jStruct_ptr)
         return rv
         
@@ -636,17 +636,17 @@ class W3jBoris(object):
     #wBen = W3jBen("test.hdf")
     #wBoris = W3jBoris(x, 0.5)
     #wBoris.calculate()
-    #ms = np.array([(u,v,w) 
-        #for u in np.arange(-x,x,0.5) 
-        #for v in np.arange(-x,x,0.5) 
-        #for w in np.arange(-x,x,0.5)])
-    #js = np.array([(u,v) 
-        #for u in np.arange(0,x,0.5) 
-        #for v in np.arange(0,x,0.5)])
+    #ms = be.array([(u,v,w) 
+        #for u in be.arange(-x,x,0.5) 
+        #for v in be.arange(-x,x,0.5) 
+        #for w in be.arange(-x,x,0.5)])
+    #js = be.array([(u,v) 
+        #for u in be.arange(0,x,0.5) 
+        #for v in be.arange(0,x,0.5)])
     #print "Objects created"
     #print "Test commensing"
     #count_range = range(0, 16 * x + 1, 2 * x)
-    #for j1 in np.arange(0,x,0.5):
+    #for j1 in be.arange(0,x,0.5):
         #print "\nj1 is %f"%j1
         #for j2, j3 in js:
             #for m1, m2, m3 in ms:

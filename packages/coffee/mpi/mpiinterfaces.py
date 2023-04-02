@@ -12,6 +12,7 @@ from mpi4py import MPI
 import logging
 import numpy as np
 from future.utils import with_metaclass
+from coffee.backend import be
 
 ###############################################################################
 # Abstract Base Class for MPI Interfaces
@@ -274,14 +275,14 @@ class EvenCart(MPIInterface):
                 #self.comm.sendrecv to send and recv arbitrary objects.
                 #Plus self.comm.Sendrecv requires contiguous data
                 #so only in rare cases is it possible to send.
-                #Hence the np.copy statement is required.
-                send_data = np.array(data[send_slice], copy=True, order='C')
+                #Hence the be.copy statement is required.
+                send_data = be.array(data[send_slice], copy=True, order='C')
             if source < 0:
                 recv_data = None
             else:
                 #when testing the above assertion I suggest changing this
-                #line to np.ones_like, rather than np.empty_like
-                recv_data = np.empty_like(data[recv_slice])
+                #line to be.ones_like, rather than be.empty_like
+                recv_data = be.empty_like(data[recv_slice])
             if __debug__:
                 self.log.debug("About to sendrecv")
                 self.log.debug("data to be sent is %s"%repr(send_data))
@@ -357,7 +358,7 @@ class EvenCart(MPIInterface):
                     "rdata_edims_shape is %s"%repr(rdata_edims_shape)
                     )
                 self.log.debug("self.domain is %s"%str(self.domain))
-            rdata = np.zeros(
+            rdata = be.zeros(
                 (rdata_edims_shape[0],) + self.domain
                 + rdata_edims_shape[1:],
                 dtype=data.dtype

@@ -171,7 +171,7 @@ class DataGroup(object):
             The value of the data set at index i. Must be an object that
             h5py can place into a dataset.
         """
-        value = np.array(value)
+        value = be.array(value)
         dataset = self.group.require_dataset(str(i), value.shape,  value.dtype)
         dataset[:] = value
         dataset.attrs['index'] = i
@@ -203,7 +203,7 @@ class DomainDataGroup(DataGroup):
     """
 
     def __setitem__(self, i, value):
-        value = np.array(value)
+        value = be.array(value)
         dataset = self.group.require_dataset(str(i), value.shape,  value.dtype)
         dataset[:] = value
         dataset.attrs['index'] = i
@@ -629,7 +629,7 @@ class Sim(object):
             y = group[i]
             gnu.title('Simulation %s at time %f'%(self.name,times[i])) 
             plotItems = []
-            for j,row in enumerate(np.atleast_2d(y[()])):
+            for j,row in enumerate(be.atleast_2d(y[()])):
                 plotItems +=[Gnuplot.Data(domains[i],\
                     row, \
                     title = 'Component '+str(j))]

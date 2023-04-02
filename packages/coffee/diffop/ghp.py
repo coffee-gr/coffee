@@ -61,14 +61,14 @@ class _ghp_operator(object):
         )
         if self.prime:
             r_salm = sfpy.salm.sfpy_salm(
-                np.empty_like(salm, dtype=np.typeDict['complex']), 
+                be.empty_like(salm, dtype=be.typeDict['complex']), 
                 spins - 1, 
                 lmax
                 )
             _do_derivative(salm, spins, lmax, _ethp_eigen, r_salm)
         else:
             r_salm = sfpy.salm.sfpy_salm(
-                np.empty_like(salm, dtype=np.typeDict['complex']), 
+                be.empty_like(salm, dtype=be.typeDict['complex']), 
                 spins + 1, 
                 lmax
                 )
@@ -78,11 +78,11 @@ class _ghp_operator(object):
     def _eval_sralm(self, u):
         if u.spins.shape is ():
             rv_temp = self._eval_salm(u[0])
-            rv = np.empty(
+            rv = be.empty(
                 (u.shape[0],) + (rv_temp.shape[0],),
                 dtype = u.dtype
                 )
-            rv[0,:] = np.asarray(rv_temp)
+            rv[0,:] = be.asarray(rv_temp)
             for i in range(1, u.shape[0]):
                 rv[i, :] = self._eval_salm(u[i])
             return sfpy.salm.sfpy_sralm(
@@ -94,11 +94,11 @@ class _ghp_operator(object):
                 )
         else:
             rv_temp = self._eval_salm(u[:,0])
-            rv = np.empty(
+            rv = be.empty(
                 (rv_temp.shape[0],) + (u.shape[1],) + (rv_temp.shape[1],),
                 dtype = u.dtype
                 )
-            rv[:,0,:] = np.asarray(rv_temp)
+            rv[:,0,:] = be.asarray(rv_temp)
             for i in range(1, u.shape[1]):
                 rv[:, i, :] = self._eval_salm(u[:, i])
             return sfpy.salm.sfpy_sralm(
@@ -124,7 +124,7 @@ def _ethp_eigen(s, j):
 def _transform_to_harmonic_space(u, spins, lmax):
     if spins is not None and lmax is not None:
         salm = sfpy.forward(u, spins, lmax)
-        spins = np.asarray(spins)
+        spins = be.asarray(spins)
     else:
         salm = u
         spins = u.spins
@@ -139,8 +139,8 @@ def _do_derivative(salm, spins, lmax, eigen_calc, r_salm):
             r_salm[j] = eigenvalue * sm_values
         else:
             sm_values = salm[:,j]
-            eigenvalues = np.vectorize(eigen_calc)(spins, j)
-            r_salm[:,j] = eigenvalues[:, np.newaxis] * sm_values
+            eigenvalues = be.vectorize(eigen_calc)(spins, j)
+            r_salm[:,j] = eigenvalues[:, be.newaxis] * sm_values
 
 def _transform_from_harmonic_space(r_salm, Ntheta, Nphi):
     if Ntheta is not None:

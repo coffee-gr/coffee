@@ -59,20 +59,20 @@ def forward(f, spins, lmax):
         Represents the spin weighted spherical harmonic expansion of f.
     """
     if len(f.shape) == 2:
-        f = np.array([f])
+        f = be.array([f])
     Nmaps, Ntheta, Nphi = f.shape
-    spins = np.atleast_1d(spins)
+    spins = be.atleast_1d(spins)
     if len(spins.shape)!=1:
         raise ValueError('spins must be an int or a one dimensional array of ints')
     Ntransform = spins.shape[0]
     if Nmaps != Ntransform:
         raise ValueError('number of spins must equal the number of functions')
 
-    alm = np.array([
+    alm = be.array([
         spinsfast.map2salm(f[i], spins[i], lmax)
         for i in range(Nmaps)
     ])
     return salm.sfpy_salm(alm, spins, lmax)
 
-#a = np.zeros((2,8,8), dtype="complex")
+#a = be.zeros((2,8,8), dtype="complex")
 #print forward(a, [1,3], 3)

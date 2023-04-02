@@ -302,8 +302,8 @@ class CGBoris(object):
             where i is 1, 2 or 3.")
         if w3j.trivial_zero(j1, j2, j3, m1, m2, -m3):
             return 0.0
-        js = np.array([j1,j2,j3], dtype = typeDict['double'])
-        ms = np.array([m1,m2,m3], dtype = typeDict['double'])
+        js = be.array([j1,j2,j3], dtype = typeDict['double'])
+        ms = be.array([m1,m2,m3], dtype = typeDict['double'])
         rv = self._cg.clebschGordanLookup(js, ms, self._cplCw3jStruct_ptr)
         return rv
         
@@ -331,17 +331,17 @@ class CGBoris(object):
     #cgStone = CGStone()
     #cgBorisw3j = CGW3j(wBoris)
     #cgBoris = CGBoris(wBoris)
-    #ms = np.array([(u,v,w) 
-        #for u in np.arange(-x,x,0.5) 
-        #for v in np.arange(-x,x,0.5) 
-        #for w in np.arange(-x,x,0.5)])
-    #js = np.array([(u,v) 
-        #for u in np.arange(0,x,0.5) 
-        #for v in np.arange(0,x,0.5)])
+    #ms = be.array([(u,v,w) 
+        #for u in be.arange(-x,x,0.5) 
+        #for v in be.arange(-x,x,0.5) 
+        #for w in be.arange(-x,x,0.5)])
+    #js = be.array([(u,v) 
+        #for u in be.arange(0,x,0.5) 
+        #for v in be.arange(0,x,0.5)])
     #print "Objects created"
     #print "Test commensing"
     #count_range = range(0, 16 * x + 1, 2 * x)
-    #for j1 in np.arange(0,x,0.5):
+    #for j1 in be.arange(0,x,0.5):
         #print "\nj1 is %f"%j1
         #for j2, j3 in js:
             #for m1, m2, m3 in ms:

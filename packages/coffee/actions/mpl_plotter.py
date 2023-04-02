@@ -48,10 +48,10 @@ class Plotter(Prototype):
     
     def _doit(self, it, u):
         x = u.x
-        index = np.asarray(self.index)
+        index = be.asarray(self.index)
         f = u.fields[index]
-        mx = np.max(f.flat)
-        mn = np.min(f.flat)
+        mx = be.max(f.flat)
+        mn = be.min(f.flat)
         self.axes.set_title("Iteration: %d, Time: %f" % (it,u.time))
         #self.axes.set_xlim(x[0],x[-1])
         #self.axes.set_ylim(mn,mx,auto=True)

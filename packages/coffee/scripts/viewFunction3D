@@ -77,9 +77,9 @@ with sd.SimulationHDF(args.file) as file:
         g.reset()
     
         #collate needed data
-        x = np.array([sim.time[i][0] for i in range(len(sim.time))])
+        x = be.array([sim.time[i][0] for i in range(len(sim.time))])
         y = sim.domain[0]
-        z = np.empty((len(x),numOfComps,len(y)))
+        z = be.empty((len(x),numOfComps,len(y)))
         for j in range(len(x)):
           z[j] = sim.raw[j] #[phi_index,:]
         

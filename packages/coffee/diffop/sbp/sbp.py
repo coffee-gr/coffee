@@ -4,13 +4,11 @@
 A module to manage summation by parts finite difference operators.
 """
 
-from __future__ import division, print_function
-import sys
 import os
 import math
 import numpy as np
 import logging
-
+from coffee.backend import be
 
 ################################################################################
 # Base class for SBP operators
@@ -99,21 +97,20 @@ class SBP(object):
         if __debug__:
             self.log.debug("Boundary region r = %s, c = %s"%(r,c))
             self.log.debug("Array to operate on is = %s"%repr(u))
-        # du = np.zeros_like(u)
-        du = np.convolve(u, self.A, mode='same')
+        du = be.convolve(u, self.A, mode='same')
         if __debug__:
             self.log.debug("After convolve: du = %s"%repr(du))
         if boundary_ID is None:
-            du[0:r] = np.dot(self.Ql, u[0:c])
-            du[-r:] = np.dot(self.Qr, u[-c:])
+            du[0:r] = be.dot(self.Ql, u[0:c])
+            du[-r:] = be.dot(self.Qr, u[-c:])
             if __debug__:
                 self.log.debug("Applying both boundary region computation")
         elif boundary_ID == grid.LEFT:
-            du[0:r] = np.dot(self.Ql, u[0:c])
+            du[0:r] = be.dot(self.Ql, u[0:c])
             if __debug__:
                 self.log.debug("Applying left boundary region computation")
         elif boundary_ID == grid.RIGHT:
-            du[-r:] = np.dot(self.Qr, u[-c:])
+            du[-r:] = be.dot(self.Qr, u[-c:])
             if __debug__:
                 self.log.debug("Applying right boundary region computation")    
         if __debug__:
@@ -208,15 +205,15 @@ class SBP(object):
     def __str__(self):
         return "Differential operator "%self.name
         
-    def save(self):
-        """Outputs a textual representation of the operator in the users
-        home directory.
-        """
-        filename = os.path.expanduser("~/" + self.name)
-        print(filename)
-        np.savetxt(filename + "_left.txt", self.Ql)
-        np.savetxt(filename + "_right.txt", self.Qr)
-        np.savetxt(filename + "_mid.txt", self.A)
+    # def save(self):
+    #     """Outputs a textual representation of the operator in the users
+    #     home directory.
+    #     """
+    #     filename = os.path.expanduser("~/" + self.name)
+    #     print(filename)
+    #     be.savetxt(filename + "_left.txt", self.Ql)
+    #     be.savetxt(filename + "_right.txt", self.Qr)
+    #     be.savetxt(filename + "_mid.txt", self.A)
 
 
 ################################################################################
@@ -235,11 +232,11 @@ class D21_CNG(SBP):
 
     def __init__(self, *args, **kwargs):
 
-        self.A = -np.array([-1.0/2, 0.0, 1.0/2])
+        self.A = -be.array([-1.0/2, 0.0, 1.0/2])
         self.name = "D21_CNG"
         self.order = 1
         
-        Q = np.zeros((2,3))
+        Q = be.zeros((2,3))
         
         Q[0,0] = -1
         Q[0,1] = 1.0
@@ -251,15 +248,15 @@ class D21_CNG(SBP):
         
         Q = 0.5 * Q
         
-        P = np.zeros((2,2))
+        P = be.zeros((2,2))
         P[0,0] = 0.5
         P[0,1] = 0
         P[1,0] = 0
         P[1,1] = 1
         
-        Pinv = np.linalg.inv(P)
+        Pinv = be.linalg.inv(P)
         self.pbound = Pinv[:,0]
-        self.Ql = np.dot(Pinv,Q)
+        self.Ql = be.dot(Pinv,Q)
         self.Qr = -self.Ql[::-1,::-1]
         
         super(D21_CNG, self).__init__(*args, **kwargs)
@@ -282,22 +279,22 @@ class D42(SBP):
     under the heading "Second-order accuracy at the boundary". This 
     paper also gives the norm used. 
     
-    The norm in this case is given as np.diag([17./48,59./48,43./48,49./48]).
+    The norm in this case is given as be.diag([17./48,59./48,43./48,49./48]).
     Note the additional factors included in the code for initialisation.
     """
     
     def __init__(self, *args, **kwargs):
         self.name = "D42"
         self.order = 1
-        self.A = np.array([-1./12.,2./3.,0.,-2./3.,1./12.])
-        self.Ql = np.array( \
+        self.A = be.array([-1./12.,2./3.,0.,-2./3.,1./12.])
+        self.Ql = be.array( \
             [[-24.0/17.0, 59.0/34.0, -4.0/17.0, -3.0/34.0,         0,         0 ],\
              [-1.0/2.0,           0,   1.0/2.0,         0,         0,         0 ],\
              [4.0/43.0,  -59.0/86.0,         0, 59.0/86.0, -4.0/43.0,         0 ],\
              [3.0/98.0,           0,-59.0/98.0,         0, 32.0/49.0, -4.0/49.0 ]])
         self.Qr = -self.Ql[::-1,::-1]
         #P is the identity, H is as given above
-        self.pbound = np.array([48./17])
+        self.pbound = be.array([48./17])
         self.bdyRegion = self.Ql.shape
         super(D42, self).__init__(*args, **kwargs)
 
@@ -328,9 +325,9 @@ class D43_Tiglioetal(SBP):
     def __init__(self, *args, **kwargs):
         self.name = "D43_Tiglioetal"
         self.order = 1
-        self.A = np.array([-1./12., 2./3., 0., -2./3., 1./12.])
+        self.A = be.array([-1./12., 2./3., 0., -2./3., 1./12.])
 
-        self.Ql = np.zeros((5,7))
+        self.Ql = be.zeros((5,7))
         self.Ql[0,0] = -2.09329763466349871588733
         self.Ql[0,1] = 4.0398572053206615302160
         self.Ql[0,2] = -3.0597858079809922953240
@@ -369,7 +366,7 @@ class D43_Tiglioetal(SBP):
 
         self.Qr = -self.Ql[::-1,::-1]
         # P is the identity.
-        self.pbound = np.array([4.186595370392226897362216859769846226369])
+        self.pbound = be.array([4.186595370392226897362216859769846226369])
         super(D43_Tiglioetal, self).__init__(*args, **kwargs)
 
 class D43_CNG(SBP):
@@ -383,7 +380,7 @@ class D43_CNG(SBP):
     """
     r1 = -(2177.*math.sqrt(295369.) - 1166427.)/(25488.)
     r2 = (66195.*math.sqrt(53.*5573.) - 35909375.)/101952.
-    A = np.array([-1./12., 2./3., 0., -2./3., 1./12.])
+    A = be.array([-1./12., 2./3., 0., -2./3., 1./12.])
     name = "D43_CNG"
 
     def __init__(self, *args, **kwargs):
@@ -391,7 +388,7 @@ class D43_CNG(SBP):
         self.order = 1
         a = self.r1
         b = self.r2
-        Q = np.zeros((4,7))
+        Q = be.zeros((4,7))
         
         Q[0,0] = -0.5
         Q[0,1] = -(864.*b + 6480*a + 305)/4320.
@@ -420,7 +417,7 @@ class D43_CNG(SBP):
         Q[3,5] = -1./12.
         Q[3,4] =  8./12.
         
-        P = np.zeros((4,4))
+        P = be.zeros((4,4))
         P[0,0] = -(216*b + 2160*a - 2125)/(12960)
         P[0,1] = (81*b + 675*a + 415)/540
         P[0,2] = -(72*b + 720*a + 445)/(1440)
@@ -441,15 +438,15 @@ class D43_CNG(SBP):
         P[3,2] = P[2,3]
         P[3,3] = -(216*b + 2160*a - 12085)/(12960)
         
-        Pinv = np.linalg.inv(P)
+        Pinv = be.linalg.inv(P)
         self.pbound = Pinv[:,0]
-        self.Ql = np.dot(Pinv,Q)
+        self.Ql = be.dot(Pinv,Q)
         self.Qr = -self.Ql[::-1,::-1]
         
         # Note that the operation Ql[::-1,::-1]
         # is not the transpose. The instructions in
         # the relevant paper are misleading.        
-        #>>> a = np.array([[1,2,3],[4,5,6],[7,8,9]])
+        #>>> a = be.array([[1,2,3],[4,5,6],[7,8,9]])
         #>>> a
         #array([[1, 2, 3],
         #       [4, 5, 6],
@@ -472,12 +469,12 @@ class D43_Strand(SBP):
     
     Note the terms introduced in the initialisation code.
     """
-    A = np.array([-1./12.,2./3.,0.,-2./3.,1./12.])
+    A = be.array([-1./12.,2./3.,0.,-2./3.,1./12.])
     name = "D43_Strand"
     
     def __init__(self, *args, **kwargs):
         self.order = 1
-        Q = np.mat(np.zeros((5,7)))
+        Q = be.mat(be.zeros((5,7)))
         Q[0,0] = -11.0/6
         Q[0,1] = 3.0
         Q[0,2] = -3.0/2
@@ -516,7 +513,7 @@ class D43_Strand(SBP):
         
         self.Ql = Q
         self.Qr = -self.Ql[::-1,::-1]
-        self.pbound = np.array([11./3])
+        self.pbound = be.array([11./3])
         
         super(D43_Strand, self).__init__(*args, **kwargs)
 
@@ -537,8 +534,8 @@ class D65_min_err(SBP):
     """
        
     name = "D65"
-    A = np.array([1./60.,-3./20.,3./4.,0.,-3./4.,3./20.,-1./60.])
-    Ql = np.mat(np.zeros((7,10)))
+    A = be.array([1./60.,-3./20.,3./4.,0.,-3./4.,3./20.,-1./60.])
+    Ql = be.mat(be.zeros((7,10)))
 
     Ql[0,0] = -2.465354921110524023660777656111276003457
     Ql[0,1] = 6.092129526663144141964665936667656020742
@@ -622,7 +619,7 @@ class D65_min_err(SBP):
     def __init__(self, *args, **kwargs):
         self.Qr = -self.Ql[::-1,::-1]
         self.order = 1
-        self.pbound = np.array([1/4.930709842221048])
+        self.pbound = be.array([1/4.930709842221048])
         super(D65_min_err, self).__init__(*args, **kwargs)
 
 ################################################################################
@@ -639,7 +636,7 @@ class D43_2_CNG(SBP):
     """
     r1 = -(2177.*math.sqrt(295369.) - 1166427.)/(25488.)
     r2 = (66195.*math.sqrt(53.*5573.) - 35909375.)/101952.
-    A = np.array([-1./12.,16./12.,-30./12.,16./12.,-1./12.])
+    A = be.array([-1./12.,16./12.,-30./12.,16./12.,-1./12.])
     name = "D43_2_CNG"
 
     def __init__(self, *args, **kwargs):
@@ -647,7 +644,7 @@ class D43_2_CNG(SBP):
         self.order = 2
         a = self.r1
         b = self.r2
-        Ql = np.zeros((3,5))
+        Ql = be.zeros((3,5))
         
         Ql[0,0] = 35.0/12
         Ql[0,1] = -26.0/3
@@ -670,7 +667,7 @@ class D43_2_CNG(SBP):
         Ql[2,3] = 16./12
         Ql[2,4] = -1./12
         
-        P = np.zeros((4,4))
+        P = be.zeros((4,4))
         P[0,0] = -(216*b + 2160*a - 2125)/(12960)
         P[0,1] = (81*b + 675*a + 415)/540
         P[0,2] = -(72*b + 720*a + 445)/(1440)
@@ -691,7 +688,7 @@ class D43_2_CNG(SBP):
         P[3,2] = P[2,3]
         P[3,3] = -(216*b + 2160*a - 12085)/(12960)
         
-        Pinv = np.linalg.inv(P)
+        Pinv = be.linalg.inv(P)
         self.pbound = Pinv[:,0]
         self.Ql = Ql
         self.Qr = self.Ql[::-1,::-1]

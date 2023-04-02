@@ -52,13 +52,13 @@ with sd.SimulationHDF(sys.argv[1]) as file:
         time = []
         mapping = sd.array_value_index_mapping(domain,sim.domain[0])
         for i,ds in enumerate(sim.getDgType(sys.argv[2])):
-            dl = np.zeros((2,))
+            dl = be.zeros((2,))
             for map in mapping:
                 if sim.domain[0][map[1]]<=0:
-                    dl = dl + np.absolute(ds.value[:,map[1]])
-            data += [np.sum(dl)]
+                    dl = dl + be.absolute(ds.value[:,map[1]])
+            data += [be.sum(dl)]
             time += [sim.time[i][0]]
-        plot_data += [Gnuplot.Data(time,np.log2(data),title = sim.name)]
+        plot_data += [Gnuplot.Data(time,be.log2(data),title = sim.name)]
     
     # Plot data
     g.plot(*plot_data)

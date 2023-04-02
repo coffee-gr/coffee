@@ -16,18 +16,18 @@ from coffee.swsh import spinsfastpy as sfpy
 def compute(power):
     Ntheta = 2**(power)
     Nphi = 2**power
-    spins = np.array([0])
+    spins = be.array([0])
     lmax = 3
     dtheta = math.pi/(Ntheta-1)
     dphi = 2*math.pi/Nphi
 
-    Y000 = np.empty((Ntheta, Nphi), dtype = typeDict['complex'])
-    Y01m1 = np.empty_like(Y000)
-    Y010 = np.empty_like(Y000)
-    Y011 = np.empty_like(Y000)
-    Y110 = np.empty_like(Y000)
-    Y11m1 = np.empty_like(Y000)
-    Y111 = np.empty_like(Y000)
+    Y000 = be.empty((Ntheta, Nphi), dtype = typeDict['complex'])
+    Y01m1 = be.empty_like(Y000)
+    Y010 = be.empty_like(Y000)
+    Y011 = be.empty_like(Y000)
+    Y110 = be.empty_like(Y000)
+    Y11m1 = be.empty_like(Y000)
+    Y111 = be.empty_like(Y000)
 
     eth = ghp.eth()
 
@@ -54,26 +54,26 @@ def compute(power):
                 cmath.exp(complex(0,1) * j * dphi)
             
 
-    salm_Y01m1 = sfpy.forward(Y01m1, np.array([0]), lmax)
+    salm_Y01m1 = sfpy.forward(Y01m1, be.array([0]), lmax)
     #print "salm_Y01m1 = %s"%salm_Y01m1
     eth_Y01m1 = eth(Y01m1, spins, lmax)
     #print eth_Y01m1
     eth(eth_Y01m1, spins+1, lmax)
-#    salm_eth_Y01m1 = sfpy.forward(eth_Y01m1, np.array([1]), lmax)
-#    #print "salm_eth_Y01m1 = %s"%sfpy.forward(eth_Y01m1, np.array([1]), lmax)
-#    salm_Y11m1 = sfpy.forward(Y11m1, np.array([1]), lmax)
+#    salm_eth_Y01m1 = sfpy.forward(eth_Y01m1, be.array([1]), lmax)
+#    #print "salm_eth_Y01m1 = %s"%sfpy.forward(eth_Y01m1, be.array([1]), lmax)
+#    salm_Y11m1 = sfpy.forward(Y11m1, be.array([1]), lmax)
 #    #print "math.sqrt(2)*salm_Y11m1 = %s"%(math.sqrt(2)*salm_Y11m1)
 #    #print Y01m1.shape
 #    #print eth_Y01m1.shape
 #    fact = math.sqrt(2)
-#    raw_error = np.abs( eth_Y01m1 - fact*Y11m1 )
+#    raw_error = be.abs( eth_Y01m1 - fact*Y11m1 )
 #    print power
-#    print np.max(raw_error)
-#    #print np.sum(raw_error) * 2 * math.pi**2 / (Ntheta * Nphi)
-#    salm_raw_error = np.abs(salm_eth_Y01m1 - fact * salm_Y11m1)
-#    print np.max(salm_raw_error.view(np.ndarray))
+#    print be.max(raw_error)
+#    #print be.sum(raw_error) * 2 * math.pi**2 / (Ntheta * Nphi)
+#    salm_raw_error = be.abs(salm_eth_Y01m1 - fact * salm_Y11m1)
+#    print be.max(salm_raw_error.view(be.ndarray))
 #    print ""
-#    #print np.sum(salm_raw_error.view(np.ndarray))
+#    #print be.sum(salm_raw_error.view(be.ndarray))
     
 for i in range(4,5):
     compute(i)

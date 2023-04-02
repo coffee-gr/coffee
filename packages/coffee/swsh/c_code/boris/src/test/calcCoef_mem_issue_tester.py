@@ -39,11 +39,11 @@ _cg.calcCoeff.argtypes = [
         
 if __name__ == "__main__":
     x = 20
-    jms = np.array([x, x, 0, 0, 0], dtype=typeDict['double'])
+    jms = be.array([x, x, 0, 0, 0], dtype=typeDict['double'])
     j1_max = x + x
     j1_min = max(math.fabs(x - x), math.fabs(0))
     j1_num = j1_max - j1_min + 1
-    w3j_arr = np.empty((j1_num,), dtype=typeDict['double'])
+    w3j_arr = be.empty((j1_num,), dtype=typeDict['double'])
     print w3j_arr
     print "Entering calcCoeff"
     _cg.calcCoeff(jms, w3j_arr)

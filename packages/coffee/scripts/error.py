@@ -32,7 +32,7 @@ def exact(args):
         # is the same and that the values of the components are in the first
         # axis of raw.shape
         num_of_comps = sims[0].numvar
-        tableE = np.zeros(
+        tableE = be.zeros(
             (len(args.Lp), len(tSimNames), num_of_comps),
             dtype=float
             )
@@ -78,14 +78,14 @@ def exact(args):
                 #needed for fixing domain size to smallest domain. 
                 #This will cause
                 #problems when plotting.
-                #error = np.ones_like(sims[0].raw[smallest_it])
+                #error = be.ones_like(sims[0].raw[smallest_it])
                 #for from_tup, to_tup in map_generator(axes_mappings):
-                    #error[(slice(None),)+from_tup] = np.absolute(
+                    #error[(slice(None),)+from_tup] = be.absolute(
                         #sim.raw[it][(slice(None), ) + to_tup] - 
                         #sim.exact[it][(slice(None), ) + to_tup]
                         #)
                 
-                error = np.absolute(
+                error = be.absolute(
                     sim.raw[it] - sim.exact[it]
                     )
                 if __debug__:
@@ -93,7 +93,7 @@ def exact(args):
                 sim.write(sd.dgTypes["errorExa"], it, error)
                 
                 # we assume that stepsizes is constant for each slice
-                stepsizes += [np.asarray([
+                stepsizes += [be.asarray([
                     axis[1] - axis[0] for axis in domain
                     ])]
                 for j,p in enumerate(args.Lp):
@@ -123,7 +123,7 @@ def numer(args):
         # is the same and that the values of the components are in the first
         # axis of raw.shape
         num_of_comps = sims[0].numvar
-        tableE = np.zeros(
+        tableE = be.zeros(
             (len(args.Lp), len(tSimNames), num_of_comps),
             dtype=float
             )
@@ -145,9 +145,9 @@ def numer(args):
 #            compare_on_axes = 0
 #        else:
 #            index = tuple([0 for i in domain.shape])
-#            if len(np.array(domain[index]).shape) is 0 and np.array(domain[index[:-1]]).shape[0] == dims-1:
+#            if len(be.array(domain[index]).shape) is 0 and be.array(domain[index[:-1]]).shape[0] == dims-1:
 #                compare_on_axes = 1
-#            elif len(np.array(domain[index])) is dims:
+#            elif len(be.array(domain[index])) is dims:
 #                compare_on_axes = 0
 #            else:
 #                raise Exception("Unable to determine domain type")
@@ -203,8 +203,8 @@ def numer(args):
                     minuend_dg = getattr(minuend, dgType)
                     
                     #Calculating difference in values of common domains
-                    #diff = np.ones_like(minuend_dg[minuend_index])
-                    diff = np.ones((
+                    #diff = be.ones_like(minuend_dg[minuend_index])
+                    diff = be.ones((
                         minuend_dg[minuend_index].shape[0],
                         len(axes_mappings[0])
                         ))
@@ -217,13 +217,13 @@ def numer(args):
                     #Storing data
                     minuend.write(sd.dgTypes["errorNum"],\
                         minuend_index,\
-                        np.absolute(diff),\
+                        be.absolute(diff),\
                         #derivedAttrs = {sd.dgTypes['time']:time})
                         #name=sd.dgTypes[dgType]
                         )
                     
                     # we assume that dx is constant for each slice
-                    stepsizes += [np.asarray([
+                    stepsizes += [be.asarray([
                         axis[1] - axis[0] for axis in minuend_domain
                         ])]
                     for j, p in enumerate(args.Lp):
@@ -265,14 +265,14 @@ def map_generator(array, i=0):
 # returns descrete version of lp norms
 
 def Lp(errors, stepsizes, p):
-    errors = np.absolute(errors)
+    errors = be.absolute(errors)
     if p == float('infinity'):
-        rerrors = np.max(errors)
+        rerrors = be.max(errors)
     else:
-        rerrors = np.power(
-            np.squeeze(np.apply_over_axes(
-                np.sum,
-                np.power(errors,p),
+        rerrors = be.power(
+            be.squeeze(be.apply_over_axes(
+                be.sum,
+                be.power(errors,p),
                 list(range(1,len(errors.shape)))
                 )),
             1/p
@@ -307,18 +307,18 @@ def _printErrorConv(Sims,Indices,errorData,stepSizes,time,p):
         for j, comp in enumerate(Indices):
             if not i == 0:
                 s = s+ "{0:<15.6f}  {1:<10.4f}".format(\
-                    np.log2(errorData[i][j]),\
+                    be.log2(errorData[i][j]),\
                     _conv(errorData[i-1][j],stepSizes[i-1],errorData[i][j],\
                         stepSizes[i])[0])
             else:
                 s = s+ "{0:<15.6f}  {1:10}".format(\
-                    np.log2(errorData[i][j]),'')
+                    be.log2(errorData[i][j]),'')
         print(s)
         rString += [s+"\n"]
     return rString
 
 def _conv(old,numSteps1,new,numSteps2):
-    return np.log(old/new)/np.log(numSteps1/numSteps2)
+    return be.log(old/new)/be.log(numSteps1/numSteps2)
 
 ################################################################################
 # Main parser

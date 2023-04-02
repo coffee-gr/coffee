@@ -13,15 +13,15 @@ sfpy.set_clebsch_gordan_default(cg.CGW3j(w3j_calc))
 
 Ntheta = 11
 Nphi = 11
-spins = np.array([0])
+spins = be.array([0])
 lmax = 1
 dtheta = math.pi/(Ntheta-1)
 dphi = 2*math.pi/Nphi
 delta_method = "RISBO_PRECOMPUTE"
-Y000 = np.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
-Y01m1 = np.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
-Y010 = np.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
-Y011 = np.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
+Y000 = be.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
+Y01m1 = be.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
+Y010 = be.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
+Y011 = be.empty(Ntheta*Nphi*spins.shape[0], dtype = typeDict['complex128'])
 
 for i in range(Ntheta):
     for j in range(Nphi):
@@ -41,7 +41,7 @@ for i in range(Ntheta):
 
 # Calculation
 
-f = np.empty((spins.shape[0],Ntheta,Nphi), dtype=typeDict['complex128'])
+f = be.empty((spins.shape[0],Ntheta,Nphi), dtype=typeDict['complex128'])
 f[0] = (Y000 + Y01m1).reshape(Ntheta,Nphi)
 #print "f is %s"%repr(a)
 salm = sfpy.forward(f, spins, lmax)
@@ -63,5 +63,5 @@ f2 = sfpy.backward(salm, Ntheta, Nphi)
 #print "f2 is %s"%repr(f2)
 #print "f + f %s"%repr(f + f)
 print "f-f2 is %s"%repr(f-f2)
-print "error is %s"%repr(np.sum(np.absolute( f - f2)))
+print "error is %s"%repr(be.sum(be.absolute( f - f2)))
 

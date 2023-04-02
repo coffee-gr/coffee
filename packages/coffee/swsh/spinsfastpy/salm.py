@@ -30,7 +30,7 @@ from coffee.swsh import clebschgordan as cg_mod
 from coffee.swsh import salm
 from coffee.swsh.spinsfastpy.index_utilities import lm_ind, ind_lm, lmax_Nlm
 
-class sfpy_salm(np.ndarray):
+class sfpy_salm(be.ndarray):
     """Represents the spin spherical harmonic coefficients of a 
     function defined on S^2.
     
@@ -79,16 +79,16 @@ class sfpy_salm(np.ndarray):
         salm : an instance of class alm.salm
         """
         # no error checking is currently done to test if s>=l. Be warned.
-        spins = np.asarray(spins)
+        spins = be.asarray(spins)
         if len(array.shape) == 1:
             if spins.shape is () and array.shape[0] == lmax_Nlm(lmax):
-                obj = np.asarray(array).view(cls)
+                obj = be.asarray(array).view(cls)
             else:
                 raise ValueError("Mal-formed array and shape for lmax")
         elif len(array.shape) == 2:
             if spins.shape[0] == array.shape[0] \
                 and array.shape[1] == lmax_Nlm(lmax):
-                obj = np.asarray(array).view(cls)
+                obj = be.asarray(array).view(cls)
             else:
                 raise ValueError("Mal-formed array and shape for lmax")
         else:
@@ -120,7 +120,7 @@ class sfpy_salm(np.ndarray):
                 s +="(%f, %f): %s\n"%(
                     self.spins, 
                     l, 
-                    repr(self[l].view(np.ndarray))
+                    repr(self[l].view(be.ndarray))
                 )
         else:
             for spin in self.spins:
@@ -128,7 +128,7 @@ class sfpy_salm(np.ndarray):
                     s +="(%f, %f): %s\n"%(
                         spin, 
                         l, 
-                        repr(self[spin,l].view(np.ndarray))
+                        repr(self[spin,l].view(be.ndarray))
                     )
         return s 
        
@@ -138,7 +138,7 @@ class sfpy_salm(np.ndarray):
             repr(self.spins),
             repr(self.bl_mult),
             repr(self.cg),
-            repr(self.view(np.ndarray))
+            repr(self.view(be.ndarray))
         )
         return s
 
@@ -177,17 +177,17 @@ class sfpy_salm(np.ndarray):
         alt_key = self.convert_key(key)
         if len(alt_key) == 1:
             if self.spins.shape is ():
-                return self.view(np.ndarray)[alt_key]
+                return self.view(be.ndarray)[alt_key]
             else:
                 return sfpy_salm(
-                    self.view(np.ndarray)[alt_key],
+                    self.view(be.ndarray)[alt_key],
                     self.spins[alt_key],
                     self.lmax,
                     self.cg,
                     self.bl_mult
                 )
         else:
-            return self.view(np.ndarray)[alt_key]
+            return self.view(be.ndarray)[alt_key]
         
     def __setitem__(self, key, value):
         """Sets the value of the coefficient corresponding to the given values
@@ -201,7 +201,7 @@ class sfpy_salm(np.ndarray):
             Specifies s, l, m.
         """
         alt_key = self.convert_key(key)
-        self.view(np.ndarray)[alt_key] = value
+        self.view(be.ndarray)[alt_key] = value
         
     def convert_key(self, key):
         """Converts a 'key' representing (s, l, m) to a tuple of
@@ -225,7 +225,7 @@ class sfpy_salm(np.ndarray):
             index corresponding to l and m.
         """
         # convert key into a tuple of ints and slices
-        key = np.index_exp[key]
+        key = be.index_exp[key]
 
         # perform the transformation from salm to indices
         if len(key) == 1:
@@ -268,11 +268,11 @@ class sfpy_salm(np.ndarray):
                 self.log.debug("self.lmax is = %s"%repr(self.lmax))
             if add:
                 if __debug__:
-                    self.log.debug("self.view(np.adarray) + other = %s"%
-                        repr(self.view(np.ndarray) + other)
+                    self.log.debug("self.view(be.adarray) + other = %s"%
+                        repr(self.view(be.ndarray) + other)
                         )
                 return sfpy_salm(
-                    self.view(np.ndarray) + other, 
+                    self.view(be.ndarray) + other, 
                     self.spins, 
                     self.lmax,
                     self.cg, 
@@ -280,11 +280,11 @@ class sfpy_salm(np.ndarray):
                     )
             else:
                 if __debug__:
-                    self.log.debug("self.view(np.adarray) - other = %s"%
-                        repr(self.view(np.ndarray) - other)
+                    self.log.debug("self.view(be.adarray) - other = %s"%
+                        repr(self.view(be.ndarray) - other)
                         )
                 return sfpy_salm(
-                    self.view(np.ndarray) - other, 
+                    self.view(be.ndarray) - other, 
                     self.spins, 
                     self.lmax,
                     self.cg, 
@@ -304,16 +304,16 @@ class sfpy_salm(np.ndarray):
         if self.cg is None and other.cg is not None:
             cg = other.cg
         s_spins = self.spins
-        s_array = np.asarray(self)
+        s_array = be.asarray(self)
         if self.spins.shape == ():
-            s_spins = np.atleast_1d(s_spins)
-            s_array = np.atleast_2d(s_array)
+            s_spins = be.atleast_1d(s_spins)
+            s_array = be.atleast_2d(s_array)
         o_spins = other.spins
-        o_array = np.asarray(other)
+        o_array = be.asarray(other)
         if other.spins.shape is ():
-            o_spins = np.atleast_1d(o_spins)
-            o_array = np.atleast_2d(o_array)
-        spins = np.union1d(s_spins, o_spins)
+            o_spins = be.atleast_1d(o_spins)
+            o_array = be.atleast_2d(o_array)
+        spins = be.union1d(s_spins, o_spins)
         if self.dtype <= other.dtype:
             dtype = other.dtype
         elif self.dtype > other.dtype:
@@ -321,7 +321,7 @@ class sfpy_salm(np.ndarray):
         else:
             raise ValueError("Unable to infer the dtype of the result of\
             addition")
-        array = np.zeros(
+        array = be.zeros(
             (spins.shape[0], lmax_Nlm(lmax)), 
             dtype=dtype
             )
@@ -335,16 +335,16 @@ class sfpy_salm(np.ndarray):
             o_spins_select = o_spins==spin
             other_has_spin = any(o_spins_select)
             if self_has_spin:
-                self_index = np.where(s_spins_select)[0][0]
+                self_index = be.where(s_spins_select)[0][0]
                 array[i][:s_len] = s_array[self_index]
                 if other_has_spin:
-                    other_index = np.where(o_spins_select)[0][0]
+                    other_index = be.where(o_spins_select)[0][0]
                     if add:
                         array[i][:o_len] += o_array[other_index]
                     else:
                         array[i][:o_len] -= o_array[other_index]
             elif other_has_spin:
-                other_index = np.where(o_spins_select)[0][0]
+                other_index = be.where(o_spins_select)[0][0]
                 if add:
                     array[i][:o_len] += o_array[other_index]
                 else:
@@ -398,7 +398,7 @@ class sfpy_salm(np.ndarray):
         salm.salm :
         """
         return sfpy_salm(
-            other * self.view(np.ndarray),
+            other * self.view(be.ndarray),
             self.spins, 
             self.lmax,
             self.cg, 
@@ -419,7 +419,7 @@ class sfpy_salm(np.ndarray):
         # Do we need to treat this multiplication as between salm objects?
         if not isinstance(other, sfpy_salm):
             a = sfpy_salm(
-                self.view(np.ndarray) * other, 
+                self.view(be.ndarray) * other, 
                 self.spins, 
                 self.lmax,
                 self.cg, 
@@ -440,20 +440,20 @@ class sfpy_salm(np.ndarray):
         else:
             lmax = self.lmax + other.lmax
         s_spins = self.spins
-        s_array = np.asarray(self)
+        s_array = be.asarray(self)
         if self.spins.shape == ():
-            s_spins = np.atleast_1d(s_spins)
-            s_array = np.atleast_2d(s_array)
+            s_spins = be.atleast_1d(s_spins)
+            s_array = be.atleast_2d(s_array)
         self_sorted_spins = sorted(s_spins)
         o_spins = other.spins
-        o_array = np.asarray(other)
+        o_array = be.asarray(other)
         if other.spins.shape is ():
-            o_spins = np.atleast_1d(o_spins)
-            o_array = np.atleast_2d(o_array)
+            o_spins = be.atleast_1d(o_spins)
+            o_array = be.atleast_2d(o_array)
         other_sorted_spins = sorted(o_spins)
         min_spin = self_sorted_spins[0] + other_sorted_spins[0]
         max_spin = self_sorted_spins[-1] + other_sorted_spins[-1]
-        spins = np.arange(min_spin, max_spin+1, 1)
+        spins = be.arange(min_spin, max_spin+1, 1)
         if self.dtype <= other.dtype:
             dtype = other.dtype
         elif self.dtype > other.dtype:
@@ -461,7 +461,7 @@ class sfpy_salm(np.ndarray):
         else:
             raise ValueError("Unable to infer the dtype of the result of\
             multiplication")
-        array = np.zeros( 
+        array = be.zeros( 
             (spins.shape[0], lmax_Nlm(lmax)), 
             dtype=dtype 
             )
@@ -469,7 +469,7 @@ class sfpy_salm(np.ndarray):
         for self_s_index, self_s in enumerate(s_spins): 
             for other_s_index, other_s in enumerate(o_spins):
                 s = self_s + other_s
-                s_index = np.where(spins==s)[0][0]
+                s_index = be.where(spins==s)[0][0]
                 for k, self_salm in enumerate(s_array[self_s_index]):
                     self_j, self_m = ind_lm(k)
                     if self_j < abs(self_s):
@@ -485,7 +485,7 @@ class sfpy_salm(np.ndarray):
                             abs(self_m + other_m)
                             )
                         jmax = min(self_j + other_j,lmax)
-                        js = np.arange(jmin, jmax+1, 1)
+                        js = be.arange(jmin, jmax+1, 1)
                         first_f = 0.5 * math.sqrt(
                             (2 * self_j + 1) * (2 * other_j + 1) / math.pi
                             )
@@ -601,24 +601,24 @@ def _convert_spin_key(key, spins):
     """
     if isinstance(key, int):
         try:
-            spin_key = np.where(spins == key)[0][0]
+            spin_key = be.where(spins == key)[0][0]
         except IndexError:
             raise IndexError("Spins %d not found in spins"%key)
     elif isinstance(key, slice):
         if key.start is None:
             start = 0
         else:
-            start = np.where(spins == key.start)[0][0]
+            start = be.where(spins == key.start)[0][0]
         if key.stop is None:
             stop = spins.size
         else: 
-            stop = np.where(spins == key.stop)[0][0]
+            stop = be.where(spins == key.stop)[0][0]
         spin_key = slice(start, stop, key.step)
     else:
         raise IndexError("spin index may only be an integer or slice")
     return spin_key
 
-class sfpy_sralm(np.ndarray):
+class sfpy_sralm(be.ndarray):
     """
     Represents the spin spherical harmonic coefficients of a function defined on
     [a,b] x S^2. It is assume that this array will be stored in an array
@@ -650,16 +650,16 @@ class sfpy_sralm(np.ndarray):
         -------
         sfpy_sralm :
         """
-        spins = np.asarray(spins)
+        spins = be.asarray(spins)
         if len(array.shape) == 2:
             if spins.shape is () and array.shape[1] == lmax_Nlm(lmax):
-                obj = np.asarray(array).view(cls)
+                obj = be.asarray(array).view(cls)
             else:
                 raise ValueError("Mal-formed array and shape for lmax")
         elif len(array.shape) == 3:
             if spins.shape[0] == array.shape[0] and \
                 array.shape[2] == lmax_Nlm(lmax):
-                obj = np.asarray(array).view(cls)
+                obj = be.asarray(array).view(cls)
             else:
                 raise ValueError("Mal-formed array and shape for lmax")
         else:
@@ -712,7 +712,7 @@ class sfpy_sralm(np.ndarray):
             repr(self.spins),
             repr(self.bl_mult),
             repr(self.cg),
-            repr(self.view(np.ndarray))
+            repr(self.view(be.ndarray))
             )
         return s
 
@@ -739,7 +739,7 @@ class sfpy_sralm(np.ndarray):
             Specifies s, l, m.
         """
         alt_key = self.convert_key(key)
-        self.view(np.ndarray)[alt_key] = value
+        self.view(be.ndarray)[alt_key] = value
 
     def __getitem__(self, key):
         """Returns the salm coefficient given by the key.
@@ -758,7 +758,7 @@ class sfpy_sralm(np.ndarray):
             return self._getitem_spin(key)
 
     def _getitem_no_spin(self, key):
-        rv = np.asarray(self)[key]
+        rv = be.asarray(self)[key]
         if len(key) == 1:
             if len(rv.shape) == 2:
                 if rv.shape[0] == 1:
@@ -786,7 +786,7 @@ class sfpy_sralm(np.ndarray):
                     self.bl_mult
                     )
         elif len(key) == 2:
-            if not isinstance(rv, np.ndarray) or len(rv.shape) < 2 or \
+            if not isinstance(rv, be.ndarray) or len(rv.shape) < 2 or \
                 rv.shape[1] != lmax_Nlm(self.lmax):
                 return rv
             else:
@@ -809,7 +809,7 @@ class sfpy_sralm(np.ndarray):
         raise IndexError("Unable to process selection")
 
     def _getitem_spin(self, key):
-        rv = np.asarray(self)[key]
+        rv = be.asarray(self)[key]
         rs = self.spins[key[0]]
         if len(key) < 2:
             return sfpy_sralm(
@@ -908,7 +908,7 @@ class sfpy_sralm(np.ndarray):
             The first int gives and spinor index and the second gives the
             index corresponding to l and m.
         """
-        key = np.index_exp[key]
+        key = be.index_exp[key]
         if len(key) == 1:
             if self.spins.shape is ():
                 return key
@@ -943,7 +943,7 @@ class sfpy_sralm(np.ndarray):
         if isinstance(other, sfpy_sralm):
             if self.spins.shape == ():
                 rv_temp = self[0] + other[0]
-                rv = np.empty(
+                rv = be.empty(
                     (self.shape[0],) + (rv_temp.shape[0],),
                     dtype = self.dtype
                     )
@@ -952,7 +952,7 @@ class sfpy_sralm(np.ndarray):
                     rv[i] = self[i] + other[i]
             else:
                 rv_temp = self[:, 0] + other[:, 0]
-                rv = np.empty(
+                rv = be.empty(
                     (rv_temp.shape[0],) + (self.shape[1],) + (rv_temp.shape[1],),
                     dtype = self.dtype
                     )
@@ -968,7 +968,7 @@ class sfpy_sralm(np.ndarray):
                 )
         else:
             return sfpy_sralm(
-                self.view(np.ndarray) + other,
+                self.view(be.ndarray) + other,
                 self.spins,
                 self.lmax,
                 cg=self.cg,
@@ -987,7 +987,7 @@ class sfpy_sralm(np.ndarray):
         salm.salm:
         """
         return sfpy_sralm(
-                other + np.asarray(self), 
+                other + be.asarray(self), 
                 self.spins,
                 self.lmax,
                 cg=self.cg,
@@ -1008,7 +1008,7 @@ class sfpy_sralm(np.ndarray):
         if isinstance(other, sfpy_sralm):
             if self.spins.shape == ():
                 rv_temp = self[0] - other[0]
-                rv = np.empty(
+                rv = be.empty(
                     (self.shape[0],) + (rv_temp.shape[0],),
                     dtype = self.dtype
                     )
@@ -1017,7 +1017,7 @@ class sfpy_sralm(np.ndarray):
                     rv[i] = self[i] - other[i]
             else:
                 rv_temp = self[:,0] - other[:, 0]
-                rv = np.empty(
+                rv = be.empty(
                     (rv_temp.shape[0],) + (self.shape[1],) + (rv_temp.shape[1],),
                     dtype = self.dtype
                     )
@@ -1033,7 +1033,7 @@ class sfpy_sralm(np.ndarray):
                 )
         else:
             return sfpy_sralm(
-                self.view(np.ndarray) - other,
+                self.view(be.ndarray) - other,
                 self.spins,
                 self.lmax,
                 cg=self.cg,
@@ -1052,7 +1052,7 @@ class sfpy_sralm(np.ndarray):
         salm.salm:
         """
         return sfpy_sralm(
-                other - np.asarray(self), 
+                other - be.asarray(self), 
                 self.spins,
                 self.lmax,
                 cg=self.cg,
@@ -1072,7 +1072,7 @@ class sfpy_sralm(np.ndarray):
         """
         if isinstance(other, sfpy_sralm):
             rv_temp = self[:,0] * other[:, 0]
-            rv = np.empty(
+            rv = be.empty(
                 (rv_temp.shape[0],) + (self.shape[1],) + (rv_temp.shape[1],),
                 dtype = self.dtype
                 )
@@ -1080,7 +1080,7 @@ class sfpy_sralm(np.ndarray):
             for i in range(1, rv.shape[0]):
                 rv[:, i] = self[:, i] * other[:, i]
             return sfpy_sralm(
-                np.ndarray(rv),
+                be.ndarray(rv),
                 rv_temp.spins,
                 rv_temp.lmax,
                 cg=rv_temp.cg,
@@ -1088,7 +1088,7 @@ class sfpy_sralm(np.ndarray):
                 )
         else:
             return sfpy_sralm(
-                self.view(np.ndarray) * other,
+                self.view(be.ndarray) * other,
                 self.spins,
                 self.lmax,
                 cg=self.cg,
@@ -1107,7 +1107,7 @@ class sfpy_sralm(np.ndarray):
         salm.salm:
         """
         return sfpy_sralm(
-            other * self.view(np.ndarray),
+            other * self.view(be.ndarray),
             self.spins,
             self.lmax,
             cg=self.cg,
@@ -1118,7 +1118,7 @@ class sfpy_sralm(np.ndarray):
 
 #if __name__ == "__main__":
     #lmax = 2
-    #a = np.ones((2,lmax_Nlm(lmax)))
+    #a = be.ones((2,lmax_Nlm(lmax)))
     #spins = 2
     #p = sfpy_sralm(a, spins, lmax)
     #p[-1]
@@ -1132,9 +1132,9 @@ class sfpy_sralm(np.ndarray):
     #lmax = 3
     #spins = -1
     #Nlmax = lmax_Nlm(lmax)
-    #a = np.arange(Nlmax)
+    #a = be.arange(Nlmax)
     #a[:] =1 
-    ##a = np.array([a])
+    ##a = be.array([a])
     #a_salm = sfpy_salm(a, spins, lmax, cg=cg_object)
     #print "a info"
     #print a_salm
@@ -1144,8 +1144,8 @@ class sfpy_sralm(np.ndarray):
     #lmax = 3
     #spins = -1
     #Nlmax = lmax_Nlm(lmax)
-    #b = np.arange(Nlmax)
-    #b = np.array(b)
+    #b = be.arange(Nlmax)
+    #b = be.array(b)
     #b_salm = sfpy_salm(b, spins, lmax, cg=cg_object)
     #print "\n\nb info"
     #print b_salm

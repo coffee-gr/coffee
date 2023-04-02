@@ -29,14 +29,13 @@ TimeSlice objects should contain all information needed to interperet the
 values of the functions being numerically evolved. In particular, aim to ensure
 that you can restart a simulation if given a timeslice, system and solver.
 """
-from __future__ import division
 
 from builtins import object
-from past.utils import old_div
 import abc
 import logging
 import numpy as np
 from future.utils import with_metaclass
+from coffee.backend import be
 
 ###############################################################################
 # TimeSlice Abstract Base Class
@@ -264,7 +263,7 @@ class ABCTimeSlice(with_metaclass(abc.ABCMeta, object)):
     
     def __div__(self, other):
         try:
-            rv = old_div(self.data, other)
+            rv = self.data / other
         except:
             raise NotImplementedError(
                 "Division of %s and %s is not implemented"
@@ -323,7 +322,7 @@ class TimeSlice(ABCTimeSlice):
     be added, multiplied, etc...
 
     To be honest rather than implementing all the additional methods by hand
-    it'd be easier just to make this default TimeSlice a subclass of np.ndarray
+    it'd be easier just to make this default TimeSlice a subclass of be.ndarray
     itself and allow TimeSlice.data to access the underlying array. But this
     hasn't been done.
     """
@@ -341,7 +340,7 @@ class TimeSlice(ABCTimeSlice):
             Converts data to a numpy array before passing it on to ABCTimeSlice.
 
         """
-        data = np.array(data)
+        data = be.array(data)
         if "name" not in kwds:
             kwds["name"] = "TimeSlice"
         super(TimeSlice, self).__init__(data, *args, **kwds) 

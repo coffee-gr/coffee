@@ -51,14 +51,14 @@ def backward(salm, Ntheta, Nphi):
          function on S^2, parameterised via the ecp discretisation, see
          section 2.3
     """
-    spins = np.atleast_1d(salm.spins)
+    spins = be.atleast_1d(salm.spins)
     Ntransform = spins.shape[0]
     lmax = salm.lmax
     if len(spins.shape) != 1:
         raise ValueError('spins must be an int or a one dimensional array of ints')
-    data = np.asarray(salm)
+    data = be.asarray(salm)
 
-    f = np.array([
+    f = be.array([
         spinsfast.salm2map(data[i], spins[i], lmax, Ntheta, Nphi)
         for i in range(Ntransform)
     ])

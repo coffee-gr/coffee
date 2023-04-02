@@ -17,6 +17,7 @@ import logging
 
 from coffee.mpi import mpiinterfaces
 from future.utils import with_metaclass
+from coffee.backend import be
 
 ################################################################################
 # Base Boundary data class
@@ -30,7 +31,7 @@ class ABCBoundary(with_metaclass(abc.ABCMeta, object)):
     Suppose that our computational domain is a line, represented as the
     array::
 
-        domain = np.linspace(0,1,num=11)
+        domain = be.linspace(0,1,num=11)
 
     This grid has two external boundaries at indices 0 and -1. 
     A subclass of ABCBoundary will generate a list of slices::
@@ -42,8 +43,8 @@ class ABCBoundary(with_metaclass(abc.ABCMeta, object)):
     Suppose that our computational domain is a line now represented as two
     sub-domains::
 
-        domain_1 = np.linspace(0,1,num=11)[:6]
-        domain_2 = np.linspace(0,1,num=11)[5:]
+        domain_1 = be.linspace(0,1,num=11)[:6]
+        domain_2 = be.linspace(0,1,num=11)[5:]
 
     Each array now has an external boundary, which represents a boundary of
     the global computational domain, and an internal boundary, which
@@ -624,7 +625,7 @@ class ABCGrid(with_metaclass(abc.ABCMeta, object)):
     def meshes(self):
         """Generates numpy arrays of grid points.
 
-        The method uses np.lib.stride_tricks.as_strided to cut down on computational
+        The method uses be.lib.stride_tricks.as_strided to cut down on computational
         time. It relies on information in the object itself to handle shape,
         number of points and values.
 
@@ -640,9 +641,9 @@ class ABCGrid(with_metaclass(abc.ABCMeta, object)):
         grid_shape = tuple([axis.size for axis in axes])
         mesh = []
         for i, axis in enumerate(axes):
-            strides = np.zeros((len(self.shape), ), dtype=int)
+            strides = be.zeros((len(self.shape), ), dtype=int)
             strides[i] = axis.itemsize
-            mesh += [np.lib.stride_tricks.as_strided(
+            mesh += [be.lib_stride_tricks_as_strided(
                 axis,
                 grid_shape,
                 strides,
@@ -703,7 +704,7 @@ class UniformCart(ABCGrid):
             mpi=mpi, *args, **kwds
             ) 
         _axes = [
-            np.linspace(
+            be.linspace(
                 self.bounds[i][0], self.bounds[i][1], self.shape[i]+1
             )
             for i in range(len(self.bounds))
@@ -814,7 +815,7 @@ class GeneralGrid(ABCGrid):
             **kwds
             ) 
         _axes = [
-            np.linspace(
+            be.linspace(
                 self.bounds[i][0], self.bounds[i][1], self.shape[i]+1
             )
             for i in range(len(self.bounds))

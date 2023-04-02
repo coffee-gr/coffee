@@ -11,10 +11,9 @@ from builtins import object
 import cmath, math
 import numpy as np
 import scipy
-#import fftw3 as fftw
 import pyfftw as fftw
 from scipy import fftpack
-import pdb
+from coffee.backend import be
 
 class FFT_lagrange(object):
     """Manually calculates the derivative using a cached matrix whose
@@ -35,15 +34,15 @@ class FFT_lagrange(object):
         N = num_grid_points
         assert N%2 == 0
         """The derivative matrix is calculated using the 'Negative Sum Trick'."""
-        M = np.empty((N,N))
+        M = be.empty((N,N))
         for i in range(N):
             M[i,i] = 0
             for j in range(N):
                 if j != i:
-                    M[i,j]= (1/2)*(-1)**(i+j)*(1/np.tan( ((i-j)*np.pi) / (N ) ))
+                    M[i,j]= (1/2)*(-1)**(i+j)*(1/be.tan( ((i-j)*be.pi) / (N ) ))
         for i in range(N):
-            M[i,i] = np.sum(sorted(M[i,:]))
-        self.M = M*(2*np.pi)/period
+            M[i,i] = be.sum(sorted(M[i,:]))
+        self.M = M*(2*be.pi)/period
             
     def __call__(self,u,dx):
         """Returns the derivative.
@@ -55,8 +54,8 @@ class FFT_lagrange(object):
         dx : float
             The spatial step size.
         """
-        ru = np.empty_like(u)
-        ru[:-1] = np.dot(self.M,u[:-1])
+        ru = be.empty_like(u)
+        ru[:-1] = be.dot(self.M,u[:-1])
         ru[-1] = ru[0]
         return ru
 
@@ -90,15 +89,15 @@ class FFT(object):
             The spatial step size.
         """
         #transform into fourier space 
-        ufft = np.fft.fft(u)
+        ufft = be.fft.fft(u)
         #collect frequencies at each index
-        ufreq = np.fft.fftfreq(ufft.size,d=dx)
+        ufreq = be.fft.fftfreq(ufft.size,d=dx)
         #compute derivative coefficient for each frequency
-        dufreq = (2*np.pi*1j*ufreq)**(self.order)
+        dufreq = (2*be.pi*1j*ufreq)**(self.order)
         #compute fourier domain derivatives
         dufft = dufreq*ufft
         #transform into 'normal' space
-        rdufft = np.fft.ifft(dufft)
+        rdufft = be.fft.ifft(dufft)
         return rdufft
    
 class RFFT(object):
@@ -132,15 +131,15 @@ class RFFT(object):
         #get length of array
         n = u.shape[0]
         #transform into fourier space
-        ufft = np.fft.rfft(u)
+        ufft = be.fft.rfft(u)
         #collect frequencies at each index
-        ufreq = np.fft.fftfreq(ufft.size, d=dx)
+        ufreq = be.fft.fftfreq(ufft.size, d=dx)
         #compute derivative coefficient for each frequency
         dufreq = (2*cmath.pi*cmath.sqrt(-1)*ufreq)**(self.order)
         #compute fourier domain derivatives
         dufft = dufreq*ufft
         #transform into 'normal' space
-        rdufft = np.fft.irfft(dufft,n)
+        rdufft = be.fft.irfft(dufft,n)
         return rdufft
 
 class FFT_diff_scipy(object):
@@ -170,7 +169,7 @@ class FFT_diff_scipy(object):
         dx : float
             The spatial step size.
         """
-        du = np.empty_like(u)
+        du = be.empty_like(u)
         du = fftpack.diff(u,self.order,self.period)
         return du
 
@@ -198,16 +197,16 @@ class FFTW(object):
             the spatial step size.
         """
         if self.u is None:
-            self.u = np.empty_like(u, dtype = np.dtype(np.complex128))
-            self.ufft = np.empty_like(self.u)
-            self.dufft = np.empty_like(self.u)
-            self.du = np.empty_like(self.u)
+            self.u = be.empty_like(u, dtype = be.dtype(be.complex128))
+            self.ufft = be.empty_like(self.u)
+            self.dufft = be.empty_like(self.u)
+            self.du = be.empty_like(self.u)
             self.fft = fftw.Plan(self.u,self.ufft,direction="forward")
             self.ifft = fftw.Plan(self.dufft,self.du,direction="backward")
-        self.fft.guru_execute_dft(u.astype(np.dtype(np.complex128)),self.ufft)
+        self.fft.guru_execute_dft(u.astype(be.dtype(be.complex128)),self.ufft)
         if self.dufreq is None:
-            ufreq = np.array([self._compute_freq(i,self.ufft.shape[0],dx[0]) for i in range(self.ufft.shape[0])])
-            self.dufreq = np.power(2*np.pi*1j*ufreq, self.order)
+            ufreq = be.array([self._compute_freq(i,self.ufft.shape[0],dx[0]) for i in range(self.ufft.shape[0])])
+            self.dufreq = be.power(2*be.pi*1j*ufreq, self.order)
         self.dufft = self.dufreq*self.ufft
         self.ifft.guru_execute_dft(self.dufft,self.du)
         return self.du/u.shape[0]
@@ -255,16 +254,16 @@ class FFTW_real(object):
             the spatial step size.
         """
         if self.u is None:
-            self.u = np.empty_like(u)
-            self.ufft = np.empty((math.floor((u.shape[0]/2)+1),), dtype = np.dtype(np.complex128))
-            self.dufft = np.empty_like(self.ufft)
-            self.du = np.empty_like(u)
+            self.u = be.empty_like(u)
+            self.ufft = be.empty((math.floor((u.shape[0]/2)+1),), dtype = be.dtype(be.complex128))
+            self.dufft = be.empty_like(self.ufft)
+            self.du = be.empty_like(u)
             self.fft = fftw.Plan(self.u,self.ufft,direction="forward")
             self.ifft = fftw.Plan(self.dufft,self.du,direction="backward")
         self.fft.guru_execute_dft(u,self.ufft)
         if self.dufreq is None:
-            ufreq = np.array([self._compute_freq(i,self.ufft.shape[0],dx[0]) for i in range(self.ufft.shape[0])])
-            self.dufreq = np.power(2*np.pi*1j*ufreq, self.order)
+            ufreq = be.array([self._compute_freq(i,self.ufft.shape[0],dx[0]) for i in range(self.ufft.shape[0])])
+            self.dufreq = be.power(2*be.pi*1j*ufreq, self.order)
         self.dufft = self.dufreq*self.ufft
         self.ifft.guru_execute_dft(self.dufft,self.du)
         return self.du/u.shape[0]
@@ -312,7 +311,7 @@ class FFT_scipy(object):
         ufreq = fftpack.fftfreq(ufft.size,d=dx)
         #self.log.debug("ufft = %s"%repr(ufft))
         #self.log.debug("ufreq = %s"%repr(ufreq))        
-        dufreq = np.power(2*np.pi*1j*ufreq,self.order)
+        dufreq = be.power(2*be.pi*1j*ufreq,self.order)
         #self.log.debug("dufreq = %s"%repr(dufreq))        
         dufft = dufreq*ufft
         #self.log.debug("dufft = %s"%repr(dufft))
@@ -352,7 +351,7 @@ class RFFT_scipy(object):
         n = u.shape[0]
         ufft = fftpack.rfft(u)
         ufreq = fftpack.rfftfreq(ufft.size)
-        dufreq = ((2*np.pi*1j*ufreq)**(self.order))
+        dufreq = ((2*be.pi*1j*ufreq)**(self.order))
         dufft = dufreq*ufft
         rdufft = fftpack.ifft(dufft,n)
         return rdufft/(dx**self.order)

@@ -56,7 +56,7 @@ class Plotter1D(Prototype):
             The delay in seconds between plotting events.
         title : string, Optional
             The title of the plot. The default is the time of the plot.
-        data_function : function(it, u, system) -> (np.ndarray, np.ndarray), Optional
+        data_function : function(it, u, system) -> (be.ndarray, be.ndarray), Optional
               A function that takes the interation number,
               a timeslice and the system. It should return a tuple consisting
               of the domain of the data and a two dimensional array. The first
@@ -107,7 +107,7 @@ class Plotter1D(Prototype):
         if __debug__:
             self.log.debug("Plotting iteration %i with data %s"%(it,str(u)))
         x, f = self.datafunc(it,u,self.system)
-        f = np.atleast_2d(f)
+        f = be.atleast_2d(f)
         if __debug__:
             self.log.debug("Data after processing by self.datafunc is %s"%f)
             self.log.debug(
@@ -172,7 +172,7 @@ class Plotter2D(Prototype):
             The strings are used to label the components being plotted.
         title : string, Optional
             The title of the plot. The default is the time of the plot.
-        data_function : function(it, u, system) -> (np.ndarray, np.ndarray), Optional
+        data_function : function(it, u, system) -> (be.ndarray, be.ndarray), Optional
               A function that takes the interation number,
               a timeslice and the system. It should return a tuple consisting
               of the domain of the data and a two dimensional array. The first
@@ -217,7 +217,7 @@ class Plotter2D(Prototype):
         if __debug__:
             self.log.debug("Plotting iteration %i with data %s"%(it,str(u)))
         x, f = self.datafunc(it, u, self.system)
-        f = np.atleast_2d(f)
+        f = be.atleast_2d(f)
         if __debug__:
             self.log.debug("Data after processing by self.datafunc is %s"%f)
             self.log.debug(

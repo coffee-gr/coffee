@@ -80,8 +80,8 @@ def _write_salm(datagroup, index, salm):
     salm: swsh.salm.salm
         The spin weighted spherical harmonic components.
     """
-    datagroup[str(index)] = np.asarray(salm)
-    datagroup[str(index)].attrs["spins"]= np.array(salm.spins)
+    datagroup[str(index)] = be.asarray(salm)
+    datagroup[str(index)].attrs["spins"]= be.array(salm.spins)
 
     lmax = salm[0].lmax
     for i in range(1, salm.shape[0]):

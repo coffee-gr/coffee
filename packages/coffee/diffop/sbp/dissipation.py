@@ -49,21 +49,21 @@ class DissDiag(Diss):
     def __call__(self, u, dx, boundary_ID=None):
         super(DissDiag, self)._consistancy_check(u, self.bdyRegion)
         r, c = self.bdyRegion
-        diss_u = np.zeros_like(u)
-        diss_u = np.convolve(u, self.A, mode='same')
+        diss_u = be.zeros_like(u)
+        diss_u = be.convolve(u, self.A, mode='same')
         if __debug__:
             self.log.debug("After convolve: diss_u = %s"%repr(diss_u))
         if boundary_ID is None:
-            diss_u[0:r] = np.dot(self.Ql, u[0:c])
-            diss_u[-r:] = np.dot(self.Qr, u[-c:])
+            diss_u[0:r] = be.dot(self.Ql, u[0:c])
+            diss_u[-r:] = be.dot(self.Qr, u[-c:])
             if __debug__:
                 self.log.debug("Applying both boundary region computation")
         elif boundary_ID == grid.LEFT:
-            diss_u[0:r] = np.dot(self.Ql, u[0:c])
+            diss_u[0:r] = be.dot(self.Ql, u[0:c])
             if __debug__:
                 self.log.debug("Applying left boundary region computation")
         elif boundary_ID == grid.RIGHT:
-            diss_u[-r:] = np.dot(self.Qr, u[-c:])
+            diss_u[-r:] = be.dot(self.Qr, u[-c:])
             if __debug__:
                 self.log.debug("Applying right boundary region computation")    
         if __debug__:
@@ -159,12 +159,12 @@ class DissRestFull(Diss):
         #This implies that the convolvution operator used to implement matrix
         #multiplication must take account of the zero rows. 
         #It turns out that this can be done by using the 'valid' mode in 
-        #the np.convolve method. This will reduce the size of the output by r
+        #the be.convolve method. This will reduce the size of the output by r
         #elements on the end and beginning of the output array. The values that
         #should be in these positions are all zero due to the r zero'd rows in
         #the matrix A.
-        diss_u_int = np.zeros_like(u)
-        diss_u_int[r:-r] = np.convolve(u, self.A, mode='valid')
+        diss_u_int = be.zeros_like(u)
+        diss_u_int[r:-r] = be.convolve(u, self.A, mode='valid')
         if __debug__:
             self.log.debug("A.u = %s"%repr(diss_u_int))
         for i in range(size):
@@ -192,7 +192,7 @@ class DissRestFull(Diss):
         #[[0, 1, 0,...], [0, -2, 1, 0,...], [0, 1, -2, 1, 0,...], ...]
         #This is why the term math.pow(-1, p) is incorporated.
         #
-        #On top of this np.convolve performs the convolution iterating from the
+        #On top of this be.convolve performs the convolution iterating from the
         #end of the stencil. This makes a difference when boundary affects of
         #convolution are desirable (as in this case). This is why there is
         #a ::-1 in the iteration for u in convolve. This did not need to be
@@ -203,7 +203,7 @@ class DissRestFull(Diss):
         #inculded to account for the vector lengthening of the 'full' mode
         #of the convolve method which adds r number of terms to the vector
         #at both ends.
-        diss_u_int = np.convolve(
+        diss_u_int = be.convolve(
             diss_u_int[r:-r], 
             math.pow(-1, self.p) * self.A[::-1], 
             mode='full'
@@ -215,12 +215,12 @@ class DissRestFull(Diss):
         #The check at the beginning of the method ensures that the
         #two array's diss_u_b[0:r] and diss_u_b[-r:] do not share any points
         #of diss_u_b
-        diss_u_b = np.zeros_like(u)
+        diss_u_b = be.zeros_like(u)
         if __debug__:
             self.log.debug("After convolve: diss_u = %s"%repr(diss_u))
         if boundary_ID is None:
-            diss_u_b[0:r] = np.dot(self.Ql, u[0:c])
-            diss_u_b[-r:] = np.dot(self.Qr, u[-c:])
+            diss_u_b[0:r] = be.dot(self.Ql, u[0:c])
+            diss_u_b[-r:] = be.dot(self.Qr, u[-c:])
             if __debug__:
                 self.log.debug("Q.u = %s"%repr(diss_u_b))
             for i in range(size):
@@ -231,24 +231,24 @@ class DissRestFull(Diss):
                     B_string += "%f, "%diss_u_b[i]
                 B_string += "%f ]"%diss_u_b[size-1]
                 self.log.debug("B.Q.u = " + B_string)
-            diss_u_b[0:c] = np.dot(diss_u_b[0:r], self.Ql)
-            diss_u_b[-c:] = np.dot(diss_u_b[-r:], self.Qr)
+            diss_u_b[0:c] = be.dot(diss_u_b[0:r], self.Ql)
+            diss_u_b[-c:] = be.dot(diss_u_b[-r:], self.Qr)
             if __debug__:
                 self.log.debug("Transpose[Q].B.Q.u = %s"%repr(diss_u_b))
             if __debug__:
                 self.log.debug("Applying both boundary region computation")
         elif boundary_ID == grid.LEFT:
-            diss_u[0:r] = np.dot(self.Ql, u[0:c])
+            diss_u[0:r] = be.dot(self.Ql, u[0:c])
             for i in range(size):
                 diss_u_b[i] = self.B(i, dx, size) * diss_u_b[i]
-            diss_u_b[0:c] = np.dot(diss_u_b[0:r], self.Ql)
+            diss_u_b[0:c] = be.dot(diss_u_b[0:r], self.Ql)
             if __debug__:
                 self.log.debug("Applying left boundary region computation")
         elif boundary_ID == grid.RIGHT:
-            diss_u[-r:] = np.dot(self.Qr, u[-c:])
+            diss_u[-r:] = be.dot(self.Qr, u[-c:])
             for i in range(size):
                 diss_u_b[i] = self.B(i, dx, size) * diss_u_b[i]
-            diss_u_b[-c:] = np.dot(diss_u_b[-r:], self.Qr)
+            diss_u_b[-c:] = be.dot(diss_u_b[-r:], self.Qr)
             if __debug__:
                 self.log.debug("Applying right boundary region computation")    
         if __debug__:
@@ -267,8 +267,8 @@ class DissRestFull(Diss):
         #Multiply by the inverse of the norm
         super(DissRestFull, self)._consistancy_check(u, self.norm_inv.shape)
         r,c = self.norm_inv.shape
-        diss_u[0:r] = np.dot(self.norm_inv, diss_u[0:c])
-        diss_u[-r:] = np.dot(self.norm_inv[::-1,::-1], diss_u[-c:])
+        diss_u[0:r] = be.dot(self.norm_inv, diss_u[0:c])
+        diss_u[-r:] = be.dot(self.norm_inv[::-1,::-1], diss_u[-c:])
 
         #return the result
         return diss_u
@@ -287,11 +287,11 @@ class Diss21_DDST(DissDiag):
     correct operator. 
     """
     def __init__(self, *args, **kwds):
-        self.A = np.array([1.0, -2.0, 1.0])
+        self.A = be.array([1.0, -2.0, 1.0])
         self.name = "Diss21_DDST"
         self.p = 2
         
-        self.Ql = np.zeros((2,3))
+        self.Ql = be.zeros((2,3))
         
         self.Ql[0,0] = -2
         self.Ql[0,1] = 2.0
@@ -313,11 +313,11 @@ class Diss42_DDST(DissDiag):
     paper. 
     """
     def __init__(self, *args, **kwds):
-        self.A = np.array([-1.0, 4.0, -6.0, 4.0, -1.0])
+        self.A = be.array([-1.0, 4.0, -6.0, 4.0, -1.0])
         self.name = "Diss42_DDST"
         self.p = 4
         
-        Q = np.zeros((4,6))
+        Q = be.zeros((4,6))
         
         Q[0,0] = -2.8235294117647058823529411764705882352941176470588
         Q[0,1] = 5.6470588235294117647058823529411764705882352941176
@@ -375,11 +375,11 @@ class Diss43_DDST(DissRestFull):
         self.bdy_percent = bdy_percent
         self.p = 2
         
-        self.A = np.array([1,-2,1])
-        self.Ql = np.array([[1,-2,1]])
+        self.A = be.array([1,-2,1])
+        self.Ql = be.array([[1,-2,1]])
         self.Qr = self.Ql
 
-        self.norm_inv = np.zeros((5,5))
+        self.norm_inv = be.zeros((5,5))
         self.norm_inv[0,0] = 4.186595370392226897362216859769846226369
         self.norm_inv[0,1] = 0
         self.norm_inv[0,2] = 0
@@ -434,6 +434,6 @@ class Diss43_DDST(DissRestFull):
 
 #if __name__ == "__main__":
     #D = Diss43_DDST(0.2)
-    #u = np.arange(20, dtype=float)
+    #u = be.arange(20, dtype=float)
     #u = 10 - (u - 5)**2
     #D(u, 0.1)
