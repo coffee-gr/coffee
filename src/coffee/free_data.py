@@ -21,15 +21,13 @@ all calls to FreeData are mediated through system.System.
 import abc
 from abc import ABCMeta
 
-class FreeData(object):
+class FreeData(object, metaclass=ABCMeta):
     """ This is a simple abstract base class for the implementation of exact 
     solutions.
 
     All the 'virtual' functions must be defined, modulo the comments given in
     the module docstring. 
     """
-
-    __metaclass__ = ABCMeta
     
     @abc.abstractmethod
     def left_boundary(self, tslice):

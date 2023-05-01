@@ -6,11 +6,9 @@ of spin weighted spherical harmonic functions.
 from abc import ABCMeta, abstractmethod
 
 
-class Salm(object):
+class Salm(object, metaclass=ABCMeta):
     """The Abstract Base Class for representations of the spin weighted
     spherical decomposition of a function with bandwidth limit."""
-
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def __repr__(self):

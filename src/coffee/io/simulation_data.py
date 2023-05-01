@@ -9,7 +9,7 @@ dgTypes maps data group names to SimOutputType class names. It is best
 to read the hdf_output module documentation as well as this modules
 documentation if the dgTypes dictionary needs to be altered.
 """
-from __future__ import division
+
 from builtins import zip
 from builtins import map
 from builtins import str

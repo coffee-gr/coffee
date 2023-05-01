@@ -7,7 +7,7 @@ Grid objects represent the computational, spatial, domain.
 Each grid object understands it's own discretisation as well as how
 """
 
-from __future__ import division
+
 from builtins import range
 from builtins import object
 import math

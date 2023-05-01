@@ -17,7 +17,7 @@ The module also contains bindings to the methods given in the file alm.h
 contained in Huffenberger's & Wandelt's spinsfast code.
 """
 # future imports
-from __future__ import division, absolute_import
+
 
 # Standard libraries
 import numpy as np

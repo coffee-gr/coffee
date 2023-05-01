@@ -62,6 +62,6 @@ salm = sfpy.forward(f, spins, lmax)
 f2 = sfpy.backward(salm, Ntheta, Nphi)
 #print "f2 is %s"%repr(f2)
 #print "f + f %s"%repr(f + f)
-print "f-f2 is %s"%repr(f-f2)
-print "error is %s"%repr(be.sum(be.absolute( f - f2)))
+print("f-f2 is %s"%repr(f-f2))
+print("error is %s"%repr(be.sum(be.absolute( f - f2))))
 

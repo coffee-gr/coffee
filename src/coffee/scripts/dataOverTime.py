@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 from builtins import input
 import sys
 sys.path.append("../../EvolutionSBP/")
@@ -63,5 +63,5 @@ with sd.SimulationHDF(sys.argv[1]) as file:
     # Plot data
     g.plot(*plot_data)
     if wait:
-        input("Press key to finish programme")
+        eval(input("Press key to finish programme"))
     print('...Done.-')

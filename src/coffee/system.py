@@ -20,7 +20,7 @@ import abc
 from abc import ABCMeta
 
 #############################################################################
-class System(object):
+class System(object, metaclass=ABCMeta):
     """The System class that specifies the interface for all other system
     classes. 
     
@@ -29,7 +29,6 @@ class System(object):
     the API that classes that describe a system of equations are expected
     to provide.
     """
-    __metaclass__ = ABCMeta
 
     def timestep(self, tslice):
         """Returns a number giving the time step for the next iteration.

@@ -1,6 +1,7 @@
 from builtins import range
 import time
-from pylab import *
+#from pylab import *
+import pylab
 import numpy as np
 
 from coffee.actions import Prototype
@@ -37,7 +38,7 @@ class Plotter(Prototype):
             self.delay = delay
             self.colors = ('b','g','r','c','m','y','k','coral') 
             from numpy import asarray
-            ion()
+            pylab.ion()
             fig = figure(1)
             ax = fig.add_subplot(111)
             self.lines = [ ax.add_line(Line2D(xlim,ylim)) for k in findex ] 
@@ -57,13 +58,13 @@ class Plotter(Prototype):
         #self.axes.set_ylim(mn,mx,auto=True)
 
         l = len(self.index)
-        ioff()
+        pylab.ioff()
         for k in range(l):
             line = self.lines[k]
             line.set_xdata(x)
             line.set_ydata(f[k])
             line.set_color(self.colors[k])
-        ion()
-        draw()
+        pylab.ion()
+        pylab.draw()
         time.sleep(self.delay)
 

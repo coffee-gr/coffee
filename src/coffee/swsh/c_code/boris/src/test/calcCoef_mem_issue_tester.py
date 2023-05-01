@@ -44,8 +44,8 @@ if __name__ == "__main__":
     j1_min = max(math.fabs(x - x), math.fabs(0))
     j1_num = j1_max - j1_min + 1
     w3j_arr = be.empty((j1_num,), dtype=typeDict['double'])
-    print w3j_arr
-    print "Entering calcCoeff"
+    print(w3j_arr)
+    print("Entering calcCoeff")
     _cg.calcCoeff(jms, w3j_arr)
-    print "Exit calcCoeff"
-    print w3j_arr, j1_min, j1_num, j1_max
+    print("Exit calcCoeff")
+    print(w3j_arr, j1_min, j1_num, j1_max)

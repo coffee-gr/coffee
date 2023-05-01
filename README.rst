@@ -37,7 +37,27 @@ coffee
     Add a short description here!
 
 
-A longer description of your project goes here...
+Installation
+------------
+
+To use this software, you will need the following dependencies:
+
+- fitsio C library
+- chealpix C library
+- mpich or Open MPI
+- pyFFTW
+- gnuplot + appropriate terminal if needed
+- HDF library
+
+Please make sure these dependencies are installed before using this software.
+
+.. rubric:: Getting started
+
+One needs to point the ``PYTHONPATH`` environment variable to the packages directory. Then the system code can be run with::
+
+    python3.10 -O TwoDAdvection_setup.py
+
+Note that adding a ``-d`` flag to this allows you to see a visualization during the computation. You should see a wave propagating from right to left with varying amplitude.
 
 
 .. _pyscaffold-notes:

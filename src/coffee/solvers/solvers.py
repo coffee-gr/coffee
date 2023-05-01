@@ -7,7 +7,7 @@ default implementations.
 This default implementations all assume that tslice.TimeSlice objects can be
 operated on by numerically (e.g. addition, multiplication, subtraction).
 """
-from __future__ import division
+
 
 from past.utils import old_div
 from builtins import object

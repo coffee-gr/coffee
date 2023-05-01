@@ -4,7 +4,7 @@
 This module implements a number of differential operators based on fourier
 transforms.
 """
-from __future__ import division
+
 
 from builtins import range
 from builtins import object

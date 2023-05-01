@@ -169,7 +169,7 @@ class TwoDadvection(System):
 
         Dtf = self.xcoef*Dxf + self.ycoef*Dyf
 
-        print('t =', t)
+        print(('t =', t))
 
         # now all time derivatives are computed
         # package them into a time slice and return

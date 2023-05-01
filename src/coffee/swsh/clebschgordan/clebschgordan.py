@@ -1,6 +1,6 @@
 """A module that contains code to compute Clebsch Gordan coefficients.
 """
-from __future__ import division
+
 import ctypes
 import logging
 import math

@@ -5,7 +5,7 @@ formalism. To use these operators coffee.swsh is used to convert function data
 into a spin weighted spherical harmonic expansion - if the data is not already
 represented in that form.
 """
-from __future__ import division
+
 from builtins import range
 from builtins import object
 import math

@@ -3,7 +3,7 @@
 """
 A module that contains dissipation operators for SBP operators.
 """
-from __future__ import division
+
 #import sys
 #import os
 #import unittest

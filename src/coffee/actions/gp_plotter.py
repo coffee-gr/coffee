@@ -1,9 +1,8 @@
 """A module containing actions that interface with GnuPlot."""
 
-from __future__ import print_function
+
 from builtins import str
 from builtins import range
-import Gnuplot
 import time
 import os
 import numpy as np
