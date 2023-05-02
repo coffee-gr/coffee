@@ -18,6 +18,7 @@ import logging
 from coffee.mpi import mpiinterfaces
 from coffee.backend import backend as be
 
+
 ################################################################################
 # Base Boundary data class
 ################################################################################
@@ -32,7 +33,7 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
 
         domain = be.linspace(0,1,num=11)
 
-    This grid has two external boundaries at indices 0 and -1. 
+    This grid has two external boundaries at indices 0 and -1.
     A subclass of ABCBoundary will generate a list of slices::
 
         [slice(0,None,None)
@@ -128,7 +129,7 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
         Parameters
         ==========
         dimension: int
-            Which dimension of the domain are we asking for the number of 
+            Which dimension of the domain are we asking for the number of
             ghost points?
 
         direction: int
@@ -146,7 +147,7 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def internal_slice(self, shape, dimension, direction):
         """Returns a tuple of slices which, when applied
-        to a data array, gives the data to be communicated to 
+        to a data array, gives the data to be communicated to
         neighbouring grids.
 
         Parameters
@@ -173,7 +174,7 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
         """
         Returns a tuple which, when applied
         to a data array, gives the data on the extenal boundaries of the grid.
-        
+
         Parameters
         ==========
         shape: tuple of ints
@@ -208,12 +209,12 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
 
     def external_slices(self, shape):
         """Returns a list of tuples. Each tuple contains an integer,
-        representing the dimension, a direction and the result of 
+        representing the dimension, a direction and the result of
         calling external_slice(shape, dimension, direction).
 
         This is a convenience method to make iteration over external
         boundaries easy for the user.
-        
+
         Parameters
         ==========
         shape: tuple of ints
@@ -233,63 +234,59 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
         if __debug__:
             self.log.debug("Shape = " + repr(shape))
         neg_slices = [
-            (i, -1, self.external_slice(shape, i, -1)) 
-            for i in range(dims) 
-            if self.external_slice(shape, i , -1) != self._empty_slice(len(shape))
+            (i, -1, self.external_slice(shape, i, -1))
+            for i in range(dims)
+            if self.external_slice(shape, i, -1) != self._empty_slice(len(shape))
         ]
         pos_slices = [
-            (i, 1, self.external_slice(shape, i, 1)) 
+            (i, 1, self.external_slice(shape, i, 1))
             for i in range(dims)
-            if self.external_slice(shape, i , 1) != self._empty_slice(len(shape))
+            if self.external_slice(shape, i, 1) != self._empty_slice(len(shape))
         ]
         if __debug__:
             self.log.debug("external slices are = " + repr(pos_slices + neg_slices))
         return pos_slices + neg_slices
- 
+
 
 ################################################################################
 # Base Boundary data class
 ################################################################################
 class SingleCartesianGridBoundary(ABCBoundary):
-    """Implements ABCBoundary for a simulation on a single grid with no 
+    """Implements ABCBoundary for a simulation on a single grid with no
     mpi dependence.
 
-    That is a grid with no internal boundaries and every grid "edge" an 
+    That is a grid with no internal boundaries and every grid "edge" an
     external boundary. There are no ghost points."""
+
     pass
+
 
 class MPIBoundary(ABCBoundary):
     """MPIBoundary implements the ABCBoundary class, it assumes use of an underlying
     MPI.Cartcomm object wrapped by mpi4py.
-    
+
     The numbers of ghost points
     and "internal points" can be specified directly using arrays of two tuples.
     If the grid is two dimensional the, for example, the array of ghost points
     and internal points will look like::
-        
+
         [(a, b), (c, d)]
 
     The tuple ``(a, b)`` gives the ghost / internal points for the first dimension.
     The int ``a`` gives the number of ghost / internal points for the
     left direction and ``b`` gives the number for the right direction.
     Similarly for ``(c,d)``.
-    
-    
+
+
     """
-    def __init__(
-            self, 
-            ghost_points, 
-            internal_points, 
-            mpi_comm=None, 
-            *args, 
-            **kwargs
-        ):
-        """ 
+
+    def __init__(self, ghost_points, internal_points, mpi_comm=None, *args, **kwargs):
+        """
         The initialiser for MPIBoundary.
 
-        The ghost points and internal points variables must both be an array 
-        or tuple with one entry for each dimension. Each entry is a 2-tuple giving 
-        the number of points in the negative and positive directions for 
+        The ghost points and internal points variables must both be an array
+        or tuple with one entry for each dimension. Each entry is a 2-tuple giving
+        the number of points in the negative and positive directions for
         that axis. See class documentation for more information.
 
         Parameters
@@ -309,7 +306,7 @@ class MPIBoundary(ABCBoundary):
         self.log = logging.getLogger("MPIBoundary")
 
     def ghost_points(self, dimension, direction):
-        "See ABCBoundary.ghost_points() for documentation."""
+        "See ABCBoundary.ghost_points() for documentation." ""
         return self._ghost_points[dimension][self._direction_to_index(direction)]
 
     def source_and_dest(self, dimension, direction):
@@ -331,26 +328,26 @@ class MPIBoundary(ABCBoundary):
             ``source`` is the rank of the mpi node that is the
             source of the data to be sent
             and ``destination`` is the rank of the mpi node that is to
-            receive the data. 
+            receive the data.
         """
         return self.mpi_comm.Shift(dimension, direction)
 
     def internal_slice(self, shape, dimension, direction):
         """See ABCBoundart.internal_slice() for documentation.
-        
+
         The first tuple in the return of the function is the list of
         slices that identifies the data to be sent. The second tuple
         is the list of slices that identifies the data to be received.
 
         Note that the return variable for this method is inconsistent
-        with the ABCBoundary method. The ABCBoundary method should be 
+        with the ABCBoundary method. The ABCBoundary method should be
         updated.
 
         Returns
         =======
         A 2-tuple of lists of tuples of ints
         """
-            
+
         source, dest = self.source_and_dest(dimension, direction)
 
         if dest < 0:
@@ -362,12 +359,8 @@ class MPIBoundary(ABCBoundary):
         else:
             recv_slice = self._empty_slice(len(shape))
 
-        i_point = self._internal_points[dimension][
-            self._direction_to_index(direction)
-        ]
-        g_point = self._ghost_points[dimension][
-            self._direction_to_index(direction)
-        ]
+        i_point = self._internal_points[dimension][self._direction_to_index(direction)]
+        g_point = self._ghost_points[dimension][self._direction_to_index(direction)]
         total_g_points = sum(self._ghost_points[dimension])
 
         # +1 because the first dimension of the data array is reserved for vector
@@ -386,32 +379,20 @@ class MPIBoundary(ABCBoundary):
         if direction == 1:
             if not dest < 0:
                 send_slice[dim_index] = slice(
-                    -total_g_points, 
-                    neg_or_none(-total_g_points + i_point), 
-                    None
+                    -total_g_points, neg_or_none(-total_g_points + i_point), None
                 )
                 rsend_slice = tuple(send_slice)
             if not source < 0:
-                recv_slice[dim_index] = slice(
-                    None,
-                    i_point,
-                    None
-                )
+                recv_slice[dim_index] = slice(None, i_point, None)
                 rrecv_slice = tuple(recv_slice)
         elif direction == -1:
             if not dest < 0:
                 send_slice[dim_index] = slice(
-                    max(0, total_g_points - i_point),
-                    total_g_points, 
-                    None
+                    max(0, total_g_points - i_point), total_g_points, None
                 )
                 rsend_slice = tuple(send_slice)
             if not source < 0:
-                recv_slice[dim_index] = slice(
-                    -i_point,
-                    None,
-                    None
-                )
+                recv_slice[dim_index] = slice(-i_point, None, None)
                 rrecv_slice = tuple(recv_slice)
         return rsend_slice, rrecv_slice
 
@@ -422,18 +403,11 @@ class MPIBoundary(ABCBoundary):
         coords = self.mpi_comm.Get_coords(self.mpi_comm.rank)
         dim = self.mpi_comm.dims[dimension]
         if coords[dimension] == 0 and direction == -1:
-            return super(MPIBoundary, self).external_slice(
-                shape, 
-                dimension, 
-                -1
-            )
+            return super(MPIBoundary, self).external_slice(shape, dimension, -1)
         if coords[dimension] == dim - 1 and direction == 1:
-            return super(MPIBoundary, self).external_slice(
-                shape,
-                dimension, 
-                1
-            )
+            return super(MPIBoundary, self).external_slice(shape, dimension, 1)
         return self._empty_slice(len(shape))
+
 
 class SimpleMPIBoundary(MPIBoundary):
     """SimpleMPIBoundary is for boundaries in mpi contexts with a fixed number of
@@ -444,7 +418,7 @@ class SimpleMPIBoundary(MPIBoundary):
         """The initialiser for SimpleMPIBoundary.
 
         This class wraps MPIBoundary. It is essentially a short cut for the
-        common situation where the number of ghost points is the same for 
+        common situation where the number of ghost points is the same for
         every direction and dimension and the number of internal points is
         the same as the number of ghost points.
 
@@ -459,16 +433,14 @@ class SimpleMPIBoundary(MPIBoundary):
             (ghost_points, ghost_points) for d in range(number_of_dimensions)
         ]
         super(SimpleMPIBoundary, self).__init__(
-            points_tuple,
-            points_tuple,
-            *args,
-            **kwargs
+            points_tuple, points_tuple, *args, **kwargs
         )
-    
+
+
 class GeneralBoundary(ABCBoundary):
     """GeneralBoundary implements ABCBoundary for grids in an mpi context with arbitrary
     ghost points and arbitrary interal and external slices fixed at run time.
-    
+
     The ghost points variable must be an array or tuple with one entry for each
     dimension. Each entry is a 2-tuple giving the number of ghost points in the
     negative and positive directions for that axis.
@@ -511,21 +483,28 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
     """The abstract base class for Grid objects.
 
     A grid class understands both the total computational domain as well as the
-    domain associated to the particular MPI node that computation is performed 
+    domain associated to the particular MPI node that computation is performed
     on. Each grid object wraps a boundary object and abstracts the boundary
     object api.
-    
+
     """
-    
-    def __init__(self, 
-            shape, bounds, name = "Grid", comparison = None,
-            mpi = None, boundary_data = None, *args, **kwds
-        ):
+
+    def __init__(
+        self,
+        shape,
+        bounds,
+        name="Grid",
+        comparison=None,
+        mpi=None,
+        boundary_data=None,
+        *args,
+        **kwds,
+    ):
         """The initialiser for grid objects.
 
         Parameters
         ==========
-        shape: tuple of ints, 
+        shape: tuple of ints,
             The shape of a theoretical numpy array that represents the computational
             domain.
         bounds: list of tuples of floats
@@ -537,7 +516,7 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
             A argument used when performing comparison of different simulations
             on different grids. Stored in the hdf file during computation. It
             allows for easy identification of how different computation grids
-            should be compared. 
+            should be compared.
         mpi: mpi.MPIInterface, Optional
             An instance of an mpi4py wrapped MPI_COMM object.
         boundary_data: ABCBoundary, Optional
@@ -551,28 +530,32 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
         self.shape = shape
         self.bounds = bounds
         self.boundary_data = boundary_data
-    
+
     def __strs__(self):
         return self.name
 
     def __repr__(self):
-        return "<%s shape=%s, bounds=%s, comparison=%s, mpi=%s>"%(
-            self.name, self.shape, self.bounds, self.comparison, self.mpi
-            )
+        return "<%s shape=%s, bounds=%s, comparison=%s, mpi=%s>" % (
+            self.name,
+            self.shape,
+            self.bounds,
+            self.comparison,
+            self.mpi,
+        )
 
     def communicate(self, data, ghost_point_processor=None):
         """Wraps the mpi.mpiinterface.communicate() method.
 
         The ghost_point_processor is an arbitary function that
         takes the data and the returned information of the
-        mpi.mpiinterfaces.communicate() method, called ``b_values`` here. 
+        mpi.mpiinterfaces.communicate() method, called ``b_values`` here.
         It must modify
         these data structure in place. It is called directly
         before the now modified data and ``b_values`` is returned.
 
         Parameters
         ==========
-        data: 
+        data:
             The data to be communicated
         ghost_point_processor: function(data, grid.ABCBoundary)
 
@@ -594,7 +577,7 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
         """Provides an easy way to call the MPI_Barrier() method via
         the mpi.mpiinterface object."""
         if self.mpi is None:
-            return 
+            return
         return self.mpi.barrier()
 
     def external_slices(self, data_shape):
@@ -613,13 +596,15 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
         if self.mpi is None:
             return data
         return self.mpi.collect_data(data)
-    
+
     @abc.abstractproperty
-    def axes(self): pass
-    
+    def axes(self):
+        pass
+
     @abc.abstractproperty
-    def step_sizes(self): pass
-    
+    def step_sizes(self):
+        pass
+
     @property
     def meshes(self):
         """Generates numpy arrays of grid points.
@@ -640,15 +625,15 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
         grid_shape = tuple([axis.size for axis in axes])
         mesh = []
         for i, axis in enumerate(axes):
-            strides = be.zeros((len(self.shape), ), dtype=int)
+            strides = be.zeros((len(self.shape),), dtype=int)
             strides[i] = axis.itemsize
-            mesh += [be.lib_stride_tricks_as_strided(
-                axis,
-                grid_shape,
-                strides,
-                writeable=False
-            )]
+            mesh += [
+                be.lib_stride_tricks_as_strided(
+                    axis, grid_shape, strides, writeable=False
+                )
+            ]
         return mesh
+
 
 ################################################################################
 # Constructors for specific cases
@@ -656,20 +641,15 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
 class UniformCart(ABCGrid):
     """An implementation of ABCGrid that assumes that the grid has uniform
     steps and is Cartesian."""
-    
-    def __init__(self, 
-            shape, 
-            bounds, 
-            mpi_comm=None, 
-            comparison=None, 
-            name=None, 
-            *args, **kwds
-        ):
+
+    def __init__(
+        self, shape, bounds, mpi_comm=None, comparison=None, name=None, *args, **kwds
+    ):
         """Initialiser for UniformCart.
 
         Parameters
         ==========
-        shape: tuple of ints, 
+        shape: tuple of ints,
             The shape of a theoretical numpy array that represents the computational
             domain.
         bounds: list of tuples of floats
@@ -681,41 +661,34 @@ class UniformCart(ABCGrid):
             A argument used when performing comparison of different simulations
             on different grids. Stored in the hdf file during computation. It
             allows for easy identification of how different computation grids
-            should be compared. 
+            should be compared.
         name: string
             The name of this object. Used in output to hdf files and logging.
         """
 
-        _shape = tuple([s+1 for s in shape])
+        _shape = tuple([s + 1 for s in shape])
         if mpi_comm is None:
             mpi = None
         else:
             mpi = mpiinterfaces.EvenCart(
-                _shape, 
+                _shape,
                 kwds.get("boundary_data", None),
-                mpi_comm=mpi_comm, 
+                mpi_comm=mpi_comm,
             )
         if name is None:
-            name = "UniformCart%s%s%s"%(shape, bounds, comparison)
+            name = "UniformCart%s%s%s" % (shape, bounds, comparison)
         super(UniformCart, self).__init__(
-            shape, bounds, 
-            name=name, comparison=comparison,
-            mpi=mpi, *args, **kwds
-            ) 
+            shape, bounds, name=name, comparison=comparison, mpi=mpi, *args, **kwds
+        )
         _axes = [
-            be.linspace(
-                self.bounds[i][0], self.bounds[i][1], self.shape[i]+1
-            )
+            be.linspace(self.bounds[i][0], self.bounds[i][1], self.shape[i] + 1)
             for i in range(len(self.bounds))
-            ]
-        self._step_sizes = [axis[1]-axis[0] for axis in _axes]
+        ]
+        self._step_sizes = [axis[1] - axis[0] for axis in _axes]
         if self.mpi is None:
             self._axes = _axes
         else:
-            self._axes = [
-                axis[self.mpi.subdomain[i]] 
-                for i, axis in enumerate(_axes)
-                ]
+            self._axes = [axis[self.mpi.subdomain[i]] for i, axis in enumerate(_axes)]
 
     @property
     def axes(self):
@@ -740,10 +713,9 @@ class UniformCart(ABCGrid):
         if self.mpi is None:
             return self
         return UniformCart(
-            self.shape, self.bounds, 
-            comparison=self.comparison, name=self.name
-            )
-        
+            self.shape, self.bounds, comparison=self.comparison, name=self.name
+        )
+
     @property
     def step_sizes(self):
         """Returns a numpy array containing the fixed step size in each dimension.
@@ -754,6 +726,7 @@ class UniformCart(ABCGrid):
         """
         return self._step_sizes
 
+
 class GeneralGrid(ABCGrid):
     """An implementation of ABCGrid that allows for periodic dimensions.
 
@@ -761,20 +734,14 @@ class GeneralGrid(ABCGrid):
     UniformCart and a period MPI network topology are compatible, however.
     """
 
-    def __init__(self, 
-            shape, 
-            bounds, 
-            periods,
-            comparison=None, 
-            name=None, 
-            *args, 
-            **kwds
-        ):
+    def __init__(
+        self, shape, bounds, periods, comparison=None, name=None, *args, **kwds
+    ):
         """The initialiser for GeneralGrid.
 
         Parameters
         ==========
-        shape: tuple of ints, 
+        shape: tuple of ints,
             The shape of a theoretical numpy array that represents the computational
             domain.
         bounds: list of tuples of floats
@@ -787,40 +754,34 @@ class GeneralGrid(ABCGrid):
             A argument used when performing comparison of different simulations
             on different grids. Stored in the hdf file during computation. It
             allows for easy identification of how different computation grids
-            should be compared. 
+            should be compared.
         name: string
             The name of this object. Used in output to hdf files and logging.
         """
         _shape = []
-        for i,p in enumerate(periods):
+        for i, p in enumerate(periods):
             if p:
                 _shape.append(shape[i])
             else:
-                shape.append(shape[i]+1)
+                shape.append(shape[i] + 1)
         _shape = tuple(_shape)
-        mpi=None
+        mpi = None
         if name is None:
-            name = "<GeneralGrid shape=%s, bounds=%s,periods=%s, comparison=%s>"%(
-                shape, 
-                bounds, 
+            name = "<GeneralGrid shape=%s, bounds=%s,periods=%s, comparison=%s>" % (
+                shape,
+                bounds,
                 periods,
-                comparison)
-        super(GeneralGrid, self).__init__(
-            shape, bounds, 
-            name=name, 
-            comparison=comparison,
-            mpi=mpi, 
-            *args, 
-            **kwds
-            ) 
-        _axes = [
-            be.linspace(
-                self.bounds[i][0], self.bounds[i][1], self.shape[i]+1
+                comparison,
             )
+        super(GeneralGrid, self).__init__(
+            shape, bounds, name=name, comparison=comparison, mpi=mpi, *args, **kwds
+        )
+        _axes = [
+            be.linspace(self.bounds[i][0], self.bounds[i][1], self.shape[i] + 1)
             for i in range(len(self.bounds))
-            ]
-        self._step_sizes = [axis[1]-axis[0] for axis in _axes]
-        #self._axes = [axis[self.mpi.subdomain] for axis in _axes]
+        ]
+        self._step_sizes = [axis[1] - axis[0] for axis in _axes]
+        # self._axes = [axis[self.mpi.subdomain] for axis in _axes]
 
     @property
     def axes(self):
@@ -846,7 +807,7 @@ class GeneralGrid(ABCGrid):
         GeneralGrid
         """
         return self
-        
+
     @property
     def step_sizes(self):
         """Returns a numpy array containing the fixed step size in each dimension.

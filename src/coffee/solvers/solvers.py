@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding: utf-8 
+# encoding: utf-8
 """
 This module contains the abstract base class for solvers as well as several
 default implementations.
@@ -27,6 +27,7 @@ class ABCSolver(object):
     This class provides the interface that is assumed of all other solvers.
     These methods are called in the ibvp.IBVP class.
     """
+
     def __init__(self, system, *args, **kwds):
         """Returns an instance of ABCSolver.
 
@@ -42,11 +43,11 @@ class ABCSolver(object):
         self.system = system
         super(ABCSolver, self).__init__(**kwds)
         self.log = logging.getLogger(self.name)
- 
+
     @abc.abstractproperty
     def name(self):
-        """This should return a name associated to the subclass. 
-        
+        """This should return a name associated to the subclass.
+
         The name will need to be defined in the subclasses constructor. The
         name is used to identify the instantiated class in the logger.
 
@@ -58,16 +59,16 @@ class ABCSolver(object):
 
         """
         return "ABCSolver"
- 
+
     @abc.abstractmethod
-    def advance(self, t, u, dt): 
+    def advance(self, t, u, dt):
         """Returns a tslice.TimeSlice containing data at time t + dt.
 
         Parameters
         ----------
-            
+
         t : float
-            The current time. 
+            The current time.
 
         u : tslice.TimeSlice
             The current tslice.TimeSlice. Note that the time in the timeslice
@@ -80,38 +81,40 @@ class ABCSolver(object):
         Returns
         -------
 
-        tslice.TimeSlice 
+        tslice.TimeSlice
             Contains the data at time t+dt.
 
         """
         raise NotImplementedError("This method needs to be implemented")
-    
+
     def __repr__(self):
-        return "<%s: system = %s>"%(self.name, self.system)
+        return "<%s: system = %s>" % (self.name, self.system)
+
 
 ################################################################################
 # First order methods
 ################################################################################
 class Euler(ABCSolver):
-    """An implementation of the first order Euler method.
-    """
-    name = 'Euler'
-  
+    """An implementation of the first order Euler method."""
+
+    name = "Euler"
+
     def advance(self, t, u, dt):
         """An Euler method implementation of ABCSolver.
 
         See the ABCSolver.advance method for documentation.
         """
         du = self.system.evaluate(t, u)
-        r_time = t + dt        
-        r_slice = u + dt*du
-        r_slice.time = r_time        
+        r_time = t + dt
+        r_slice = u + dt * du
+        r_slice.time = r_time
         return (r_time, r_slice)
 
+
 class ImplicitEuler(ABCSolver):
-    """An implementation of the first order implicit Euler method.
-    """
-    name = 'ImplicitEuler'
+    """An implementation of the first order implicit Euler method."""
+
+    name = "ImplicitEuler"
 
     def _NR(self, u_start, u_next, t, dt, domain):
         """A Newton-Raphson auxilliary routine for
@@ -133,7 +136,7 @@ class ImplicitEuler(ABCSolver):
 
         domain: grid
             The domain that the function is being evaluated over.
-            
+
         """
 
         # Starting guess for Newton-Raphson algorithm. Currently
@@ -142,30 +145,28 @@ class ImplicitEuler(ABCSolver):
         # perhaps in setup file when choosing implicit Euler.
         prev_u_next = u_next
 
-        while(True):
+        while True:
             # Evolution equation of u
             g = self.system.evaluate(
-                t + dt,
-                tslices.TimeSlice(prev_u_next,domain,time=t)
+                t + dt, tslices.TimeSlice(prev_u_next, domain, time=t)
             ).data
 
             # Derivative of evolution equation of u w.r.t. evolved variable
             dg, TOL = self.system.implicit_method_jacobian(
-                t + dt,
-                tslices.TimeSlice(prev_u_next,domain,time=t)
+                t + dt, tslices.TimeSlice(prev_u_next, domain, time=t)
             )
 
             dg = dg.data
 
             # NR is applied to f
-            f = prev_u_next - u_start - dt*g
-            df = 1. - dt*dg
+            f = prev_u_next - u_start - dt * g
+            df = 1.0 - dt * dg
 
             # Compute next value of u_next
-            next_u_next = prev_u_next - old_div(f,df)
+            next_u_next = prev_u_next - old_div(f, df)
 
             # If we get to within a certain accuracy of the root stop
-            if(all(abs(next_u_next - prev_u_next)[0] < TOL)):
+            if all(abs(next_u_next - prev_u_next)[0] < TOL):
                 break
 
             # Otherwise continue
@@ -173,7 +174,6 @@ class ImplicitEuler(ABCSolver):
 
         return next_u_next
 
-  
     def advance(self, t, u, dt):
         """An implicit Euler method implementation of ABCSolver.
 
@@ -193,18 +193,16 @@ class ImplicitEuler(ABCSolver):
         # Returns u_next from applying Newton-Raphson
         u_ret = self._NR(u_start, u_next, t, dt, u.domain)
 
-        r_time = t + dt        
-        r_slice = tslices.TimeSlice(u_ret,u.domain,r_time)  
+        r_time = t + dt
+        r_slice = tslices.TimeSlice(u_ret, u.domain, r_time)
         return (r_time, r_slice)
+
 
 ################################################################################
 # Fourth order methods
 ################################################################################
 class RungeKutta4(ABCSolver):
-    """A RungeKutta4 implementation of ABCSolver.
-    
-    
-    """
+    """A RungeKutta4 implementation of ABCSolver."""
 
     name = "RK4"
 
@@ -219,51 +217,52 @@ class RungeKutta4(ABCSolver):
         """
         if __debug__:
             self.log.debug("In advance")
-            self.log.debug("time = %s"%repr(t0))
-            self.log.debug("data = %s"%(repr(u0)))
-            self.log.debug("dt = %s"%repr(dt))
+            self.log.debug("time = %s" % repr(t0))
+            self.log.debug("data = %s" % (repr(u0)))
+            self.log.debug("dt = %s" % repr(dt))
         eqn = self.system
         u = u0
         t = t0
         k = eqn.evaluate(t, u)
         if __debug__:
-            self.log.debug("First evaluate, k = %s"%repr(k))
-        u1 = u0 + (dt/6.0)*k
+            self.log.debug("First evaluate, k = %s" % repr(k))
+        u1 = u0 + (dt / 6.0) * k
 
-        u = u0 + dt/2.0*k
-        t = t0 + dt/2.0
+        u = u0 + dt / 2.0 * k
+        t = t0 + dt / 2.0
         k = eqn.evaluate(t, u)
         if __debug__:
-            self.log.debug("Second evaluate, k = %s"%repr(k))
-        u1 += dt/3.0*k
+            self.log.debug("Second evaluate, k = %s" % repr(k))
+        u1 += dt / 3.0 * k
 
-        u = u0 + dt/2.0*k
-        t = t0 + dt/2.0
+        u = u0 + dt / 2.0 * k
+        t = t0 + dt / 2.0
         k = eqn.evaluate(t, u)
         if __debug__:
-            self.log.debug("Third evaluate, k = %s"%repr(k))
-        u1 += dt/3.0*k
+            self.log.debug("Third evaluate, k = %s" % repr(k))
+        u1 += dt / 3.0 * k
 
-        u = u0 + dt*k
+        u = u0 + dt * k
         t = t0 + dt
         k = eqn.evaluate(t, u)
         if __debug__:
-            self.log.debug("Fourth evaluate, k = %s"%repr(k))
-        u1 += dt/6.0*k
+            self.log.debug("Fourth evaluate, k = %s" % repr(k))
+        u1 += dt / 6.0 * k
         u1.time = t
-        
-        return (t,u1)
+
+        return (t, u1)
+
 
 class RungeKutta4Dirichlet(ABCSolver):
     """An implementation of the Runge Kutta 4 routine that calls
     system.dirichlet_boundary."""
 
-
     def __init__(self, **kwds):
         super(RungeKutta4Dirichlet, self).__init__(**kwds)
         if not hasattr(self.system, "dirichlet_boundary"):
-            raise Exception("%s does not implement dirichlet_boundary method"
-                %self.system)
+            raise Exception(
+                "%s does not implement dirichlet_boundary method" % self.system
+            )
 
     def advance(self, t0, u0, dt):
         """See the ABCSolver.advance method for documentation.
@@ -272,35 +271,34 @@ class RungeKutta4Dirichlet(ABCSolver):
         method to solve an ODE of the form
         fdot = rhs(t,f) that allows for the implementation of
         Dirichlet conditions during evaluation.
-        
+
         Ensure that the corresponding system file has a method called,
         "dirichlet_boundary".
         """
         eqn = self.theEqn
         u = u0
         t = t0
-        k = eqn.evaluate(t, u, intStep = 1)
-        u1 = u0 + (dt/6.0)*k
-        u1 = eqn.dirichlet_boundary(u1, intStep = 1)
+        k = eqn.evaluate(t, u, intStep=1)
+        u1 = u0 + (dt / 6.0) * k
+        u1 = eqn.dirichlet_boundary(u1, intStep=1)
 
-        u = u0 + dt/2.0*k
-        t = t0 + dt/2.0
-        k = eqn.evaluate(t, u, intStep = 2)
-        u1 += dt/3.0*k
-        u1 = eqn.dirichlet_boundary(u1, intStep = 2)
+        u = u0 + dt / 2.0 * k
+        t = t0 + dt / 2.0
+        k = eqn.evaluate(t, u, intStep=2)
+        u1 += dt / 3.0 * k
+        u1 = eqn.dirichlet_boundary(u1, intStep=2)
 
-        u = u0 + dt/2.0*k
-        t = t0 + dt/2.0
-        k = eqn.evaluate(t, u, intStep = 3)
-        u1 += dt/3.0*k
-        u1 = eqn.dirichlet_boundary(u1, intStep = 3)
+        u = u0 + dt / 2.0 * k
+        t = t0 + dt / 2.0
+        k = eqn.evaluate(t, u, intStep=3)
+        u1 += dt / 3.0 * k
+        u1 = eqn.dirichlet_boundary(u1, intStep=3)
 
-        u = u0 + dt*k
+        u = u0 + dt * k
         t = t0 + dt
-        k = eqn.evaluate(t, u, intStep = None)
-        u1 += dt/6.0*k
+        k = eqn.evaluate(t, u, intStep=None)
+        u1 += dt / 6.0 * k
         u1.time = t
-        u1 = eqn.dirichlet_boundary(u1, intStep = None)
-        
-        return (t,u1)
+        u1 = eqn.dirichlet_boundary(u1, intStep=None)
 
+        return (t, u1)

@@ -13,6 +13,7 @@ level, some iterative method.
 
 import logging
 
+
 class IBVP:
     """Handles computation of the solution to initial boundary value problems.
 
@@ -20,16 +21,14 @@ class IBVP:
     interative steps with calls to a list of actions. Information about events
     during the simulation are writen to logging.getLogger("IBVP").
     """
-    theActions  = None
+
+    theActions = None
     theGrid = None
-    theSolver  = None
+    theSolver = None
     iteration = 0
     maxIteration = None
-    
-    
-    def __init__(self, sol, eqn, grid, action = [], 
-        maxIteration = 10000, minTimestep = 1e-8
-        ): 
+
+    def __init__(self, sol, eqn, grid, action=[], maxIteration=10000, minTimestep=1e-8):
         """IBVP constructor.
 
         Parameters
@@ -42,7 +41,7 @@ class IBVP:
               The system of equations whose solution will be computed.
 
         grid : grid.Grid
-               The spatial grid over which the values of the solution to the system 
+               The spatial grid over which the values of the solution to the system
                will be computed.
 
         action : list, actions.Prototype
@@ -51,10 +50,10 @@ class IBVP:
                  each new timeslice is calculated.
 
         maxIteraction : int, Optional
-                 Specifies the maximum number of timesteps. 
+                 Specifies the maximum number of timesteps.
 
         minTimestep : float, Optinoal
-                 Specifies the minimum time step. 
+                 Specifies the minimum time step.
         """
         self.theSolver = sol
         self.theSystem = eqn
@@ -63,13 +62,13 @@ class IBVP:
         self.theActions = action
         self.log = logging.getLogger("IBVP")
         self.minTimestep = minTimestep
-             
-    def run(self, tstart, tstop = float('inf'), thits = None):
+
+    def run(self, tstart, tstop=float("inf"), thits=None):
         """Go for it! Starts the simulation.
-        
+
         Parameters
         ----------
-        
+
         tstart : float
             A number giving the time at the initial interation.
 
@@ -97,16 +96,16 @@ class IBVP:
 
         # Get initial data and configure timeslices for multiple processors.
         u = self.theSystem.initial_data(t, self.theGrid)
-        self.log.info("Running system %s"%str(self.theSystem))
-        self.log.info("Grid = %s"%str(self.theGrid))
-        self.log.info("Stepsizes = %s"%repr(u.domain.step_sizes))
-        if __debug__:    
-            self.log.debug("self.actions is %s"%repr(self.theActions))
-            self.log.debug("Initial data is = %s"%repr(u))
+        self.log.info("Running system %s" % str(self.theSystem))
+        self.log.info("Grid = %s" % str(self.theGrid))
+        self.log.info("Stepsizes = %s" % repr(u.domain.step_sizes))
+        if __debug__:
+            self.log.debug("self.actions is %s" % repr(self.theActions))
+            self.log.debug("Initial data is = %s" % repr(u))
 
         advance = self.theSolver.advance
         computation_valid = True
-        while(computation_valid and t < tstop):
+        while computation_valid and t < tstop:
             if __debug__:
                 self.log.debug("Beginning new iteration")
 
@@ -114,45 +113,38 @@ class IBVP:
             if self.iteration > self.maxIteration:
                 self.log.warning("Maximum number of iterations exceeded")
                 break
-           
+
             dt = self.theSystem.timestep(u)
 
             # Check dt for size
             if dt < self.minTimestep:
                 self.log.error(
-                    'Exiting computation: timestep too small dt = %.15f'%dt
+                    "Exiting computation: timestep too small dt = %.15f" % dt
                 )
                 break
-            
+
             # Check if dt needs to change in order to hit the next thits value.
             timeleft = tstop - t
             if timeleft < dt:
                 dt = timeleft
                 if not thits:
-                    self.log.warning(
-                            "Final time step: adjusting to dt = %.15f" % dt
-                        )
+                    self.log.warning("Final time step: adjusting to dt = %.15f" % dt)
                     computation_valid = False
                 else:
-                    self.log.warning(
-                        "Forcing evaluation at time %f"%tstop
-                    )
+                    self.log.warning("Forcing evaluation at time %f" % tstop)
                     tstop = thits.pop()
-            
-            if __debug__: 
-                self.log.debug("Using timestep dt = %f"%dt)
-           
+
+            if __debug__:
+                self.log.debug("Using timestep dt = %f" % dt)
+
             # Run the actions.
             self._run_actions(t, u)
 
             if __debug__:
-                self.log.debug(
-                    "About to advance for iteration = %i"%self.iteration
-                )
+                self.log.debug("About to advance for iteration = %i" % self.iteration)
             try:
                 t, u = advance(t, u, dt)
             except OverflowError as e:
-
                 # OverflowErrors arn't always appropirately handled. So we
                 # do it ourselves here.
                 print("Overflow error({0}): {1}".format(e.errno, e.strerror))
@@ -164,9 +156,9 @@ class IBVP:
             u.barrier()
 
             # On to the next iteration.
-            self.iteration+=1
+            self.iteration += 1
             if __debug__:
-                self.log.debug("time slice after advance = %s"%repr(u))
+                self.log.debug("time slice after advance = %s" % repr(u))
 
         # end (while)
 
@@ -178,8 +170,7 @@ class IBVP:
         # occurs.
         u.barrier()
         self.log.info(
-            "Finished computation at time %f for iteration %i"%
-            (t,self.iteration)
+            "Finished computation at time %f for iteration %i" % (t, self.iteration)
         )
         return u
 
@@ -205,13 +196,10 @@ class IBVP:
         tslice = u.collect_data()
         if tslice is not None:
             if __debug__:
-                self.log.debug(
-                    "tslice is not None. Computing if actions will run"
-                    )
+                self.log.debug("tslice is not None. Computing if actions will run")
             actions_do_actions = [
-                action.will_run(self.iteration, tslice) 
-                for action in self.theActions
-                ]
+                action.will_run(self.iteration, tslice) for action in self.theActions
+            ]
             if any(actions_do_actions):
                 if __debug__:
                     self.log.debug("Some actions will run")
@@ -219,11 +207,9 @@ class IBVP:
                     if actions_do_actions[i]:
                         if __debug__:
                             self.log.debug(
-                                "Running action %s at iteration %i"%\
-                                 (str(action), self.iteration)
-                                 )
+                                "Running action %s at iteration %i"
+                                % (str(action), self.iteration)
+                            )
                         action(self.iteration, tslice)
             if __debug__:
                 self.log.debug("All actions done")
-                
-

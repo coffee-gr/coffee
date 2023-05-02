@@ -20,6 +20,7 @@ from coffee.swsh.spinsfastpy.backward_transform import backward
 del forward_transform
 del backward_transform
 
+
 def set_clebsch_gordan_default(cg):
     """This function sets the default method for computation of
     Clebsch Gordan coefficients in the module coffee.diffop.swsh.spinsfastpy."""
