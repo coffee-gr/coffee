@@ -14,6 +14,9 @@ from coffee.diffop.sbp import sbp
 import TwoDAdvection
 import TwoDAdvection_plotter
 
+from coffee.backend import backend as be
+be.set_backend("numpy")
+
 import jax.numpy as jnp
 from jax import grad, jit, vmap
 from jax import random

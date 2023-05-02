@@ -1,1 +1,2 @@
-from .backend import be
+from .backend import Backend
+backend = Backend()
