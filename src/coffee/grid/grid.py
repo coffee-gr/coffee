@@ -16,13 +16,12 @@ import abc
 import logging
 
 from coffee.mpi import mpiinterfaces
-from future.utils import with_metaclass
 from coffee.backend import be
 
 ################################################################################
 # Base Boundary data class
 ################################################################################
-class ABCBoundary(with_metaclass(abc.ABCMeta, object)):
+class ABCBoundary(object, metaclass=abc.ABCMeta):
     """The abstract base class for boundary classes.
 
     A boundary class manages data associated to ghost points and the slices
