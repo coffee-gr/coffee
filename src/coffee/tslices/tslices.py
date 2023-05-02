@@ -40,7 +40,7 @@ from coffee.backend import be
 ###############################################################################
 # TimeSlice Abstract Base Class
 ##############################################################################
-class ABCTimeSlice(with_metaclass(abc.ABCMeta, object)):
+class ABCTimeSlice(object, metaclass=abc.ABCMeta):
     """The abstract base class for TimeSlice objects.
 
     The interface below is assumed by all other classes that interact with

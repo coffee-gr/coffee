@@ -507,7 +507,7 @@ class GeneralBoundary(ABCBoundary):
 ################################################################################
 # Base Grid class
 ################################################################################
-class ABCGrid(with_metaclass(abc.ABCMeta, object)):
+class ABCGrid(object, metaclass=abc.ABCMeta):
     """The abstract base class for Grid objects.
 
     A grid class understands both the total computational domain as well as the

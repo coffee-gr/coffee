@@ -17,7 +17,7 @@ from coffee.backend import be
 ###############################################################################
 # Abstract Base Class for MPI Interfaces
 ###############################################################################
-class MPIInterface(with_metaclass(abc.ABCMeta, object)):
+class MPIInterface(object, metaclass=abc.ABCMeta):
      
     def __init__(self, mpi_comm, *args, **kwds):
         """Initialisaer for MPIInterface objects.
