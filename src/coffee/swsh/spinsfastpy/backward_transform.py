@@ -20,21 +20,19 @@ python/spinsfast_module.c code.
 import numpy as np
 import sys
 import os
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, os.path.join(
-		dir_path, 
-		"huffenberger_wandelt", 
-		"spinsfast_rev104",
-		"lib"
-	)
+sys.path.insert(
+    0, os.path.join(dir_path, "huffenberger_wandelt", "spinsfast_rev104", "lib")
 )
 import spinsfast
+
 
 def backward(salm, Ntheta, Nphi):
     """
     Returns a function on S^2 given it's spin coefficients in the form of an
     salm object.
-    
+
     Parameters
     ----------
     salm : swsh.salm.salm
@@ -42,11 +40,11 @@ def backward(salm, Ntheta, Nphi):
     Ntheta : int
         an int giving the number of points discritising the theta variable of S^2
     Nphi : an int giving the number of points discritising the phi variable of S^2
-    
+
     Returns
     -------
-    numpy.ndarray : 
-         a numpy.ndarray of shape (salm.spins.shape[[0], Ntheta, Nphi) 
+    numpy.ndarray :
+         a numpy.ndarray of shape (salm.spins.shape[[0], Ntheta, Nphi)
          containing the values of the
          function on S^2, parameterised via the ecp discretisation, see
          section 2.3
@@ -55,12 +53,13 @@ def backward(salm, Ntheta, Nphi):
     Ntransform = spins.shape[0]
     lmax = salm.lmax
     if len(spins.shape) != 1:
-        raise ValueError('spins must be an int or a one dimensional array of ints')
+        raise ValueError("spins must be an int or a one dimensional array of ints")
     data = be.asarray(salm)
 
-    f = be.array([
-        spinsfast.salm2map(data[i], spins[i], lmax, Ntheta, Nphi)
-        for i in range(Ntransform)
-    ])
+    f = be.array(
+        [
+            spinsfast.salm2map(data[i], spins[i], lmax, Ntheta, Nphi)
+            for i in range(Ntransform)
+        ]
+    )
     return f
-    

@@ -24,27 +24,25 @@ perform some array manipulations before calling spinsfast.
 import numpy as np
 import sys
 import os
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, os.path.join(
-		dir_path, 
-		"huffenberger_wandelt", 
-		"spinsfast_rev104",
-		"lib"
-	)
+sys.path.insert(
+    0, os.path.join(dir_path, "huffenberger_wandelt", "spinsfast_rev104", "lib")
 )
 import spinsfast
 from coffee.swsh.spinsfastpy import salm
 
+
 def forward(f, spins, lmax):
     """
     Returns the spin spherical harmonic coefficients for f.
-    
+
     Parameters
     ----------
     f : numpy.ndarray of shape (Nmap, Ntheta, Nphi)
-         the values of a function on S^2 
+         the values of a function on S^2
          according to the ecp discretisation, see
-         Section 2.3 
+         Section 2.3
     spins : float, numpy.ndarray of shape (Nmap,) of floats
         Specifies
         the required spins for the calculation. Note that allowed
@@ -52,7 +50,7 @@ def forward(f, spins, lmax):
     lmax : float
         A float representation of an integer or half-integer. It specifies
         the maximum bandwidth.
-    
+
     Returns
     -------
     salm : swsh.salm.salm
@@ -62,17 +60,15 @@ def forward(f, spins, lmax):
         f = be.array([f])
     Nmaps, Ntheta, Nphi = f.shape
     spins = be.atleast_1d(spins)
-    if len(spins.shape)!=1:
-        raise ValueError('spins must be an int or a one dimensional array of ints')
+    if len(spins.shape) != 1:
+        raise ValueError("spins must be an int or a one dimensional array of ints")
     Ntransform = spins.shape[0]
     if Nmaps != Ntransform:
-        raise ValueError('number of spins must equal the number of functions')
+        raise ValueError("number of spins must equal the number of functions")
 
-    alm = be.array([
-        spinsfast.map2salm(f[i], spins[i], lmax)
-        for i in range(Nmaps)
-    ])
+    alm = be.array([spinsfast.map2salm(f[i], spins[i], lmax) for i in range(Nmaps)])
     return salm.sfpy_salm(alm, spins, lmax)
 
-#a = be.zeros((2,8,8), dtype="complex")
-#print forward(a, [1,3], 3)
+
+# a = be.zeros((2,8,8), dtype="complex")
+# print forward(a, [1,3], 3)

@@ -1,4 +1,5 @@
 import pytest
+
 from coffee.backend import Backend
 
 

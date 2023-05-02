@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding: utf-8 
+# encoding: utf-8
 """
 The abstract base class (abc) for System objects. 
 
@@ -19,11 +19,12 @@ really think about what you are doing if you don't implement all methods below.
 import abc
 from abc import ABCMeta
 
+
 #############################################################################
 class System(object, metaclass=ABCMeta):
     """The System class that specifies the interface for all other system
-    classes. 
-    
+    classes.
+
     You don't need to implement everything below, but you can expect
     errors if you don't. The main purpose of this class is to document
     the API that classes that describe a system of equations are expected
@@ -47,7 +48,7 @@ class System(object, metaclass=ABCMeta):
                 calculated in the next iteration.
         """
         return NotImplementedError("You need to implement this function")
-    
+
     def evaluate(self, t, tslice):
         """Returns the data needed by the solver.Solver subclass needed to
         calculate the values of the functions at the next time step.
@@ -71,7 +72,7 @@ class System(object, metaclass=ABCMeta):
             u are needed. In the case of RK methods t and u.time can be
             different. YOU HAVE BEEN WARNED.
 
-        tslice : tslice.TimeSlice 
+        tslice : tslice.TimeSlice
             Contains the data from which the
             'evaluate' method is meant to calculate data from.
 
@@ -83,14 +84,14 @@ class System(object, metaclass=ABCMeta):
             values of the functions being evolved at the next time slice.
         """
         return NotImplementedError("You need to implement this function")
-        
+
     def initialValues(self, t, grid):
         """Returns initial data for the simulation.
 
         Parameters
         ----------
 
-        t : float 
+        t : float
             The time at which the initial data is to be calcualted.
         grid : ABCGrid
             The grid over which the data is to be calculated.
@@ -101,7 +102,7 @@ class System(object, metaclass=ABCMeta):
             The initial values for the functions to be evolved.
         """
         return NotImplementedError("You need to implement this function")
-        
+
     def left(self, t):
         """Returns the boundary data on the 'left' boundary.
 

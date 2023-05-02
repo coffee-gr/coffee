@@ -2,20 +2,26 @@ from builtins import object
 from coffee.backend import backend as be
 import logging
 
+
 class Prototype(object):
-    """The prototype of all actions. 
-    
+    """The prototype of all actions.
+
     This class provides basic functionality that all actions require.
-    
+
     To subclass this class:
     1) define the method _doit in the subclass
     2) call the Prototypes constructor to ensure that frequency, start and stop
     are properly initialised.
     """
 
-    def __init__(self, frequency = 1, start = -float('infinity'),
-            stop = float('infinity'), thits=None, thits_toll=1e-14,
-        ):
+    def __init__(
+        self,
+        frequency=1,
+        start=-float("infinity"),
+        stop=float("infinity"),
+        thits=None,
+        thits_toll=1e-14,
+    ):
         """The initialiser for the Prototype action class.
 
         Parameters
@@ -39,8 +45,8 @@ class Prototype(object):
         else:
             self.thits = None
         self.thits_toll = thits_toll
-    
-    def will_run(self,it,u):
+
+    def will_run(self, it, u):
         """Returns true if the action will run for the given iteration and
         time slice.
 
@@ -56,11 +62,9 @@ class Prototype(object):
         boolean :
             True if the action will run.
         """
-        test = (it % self.frequency) == 0 \
-            and self.start<=u.time<=self.stop
+        test = (it % self.frequency) == 0 and self.start <= u.time <= self.stop
         if self.thits is not None:
-            test = test and \
-                (be.absolute(u.time - self.thits) < self.thits_toll).any()
+            test = test and (be.absolute(u.time - self.thits) < self.thits_toll).any()
         return test
 
     def __call__(self, it, u):
@@ -73,18 +77,19 @@ class Prototype(object):
         u : tslice.TimeSlice
             The current timeslice.
         """
-        if self.will_run(it,u):
+        if self.will_run(it, u):
             self._doit(it, u)
-    
+
     def _doit(self, it, u):
         pass
+
 
 class BlowupCutoff(Prototype):
     """An action that stops the simulation if some component of the computed
     solution is above the given value.
     """
 
-    def __init__(self, cutoff = 10, **kwds ):
+    def __init__(self, cutoff=10, **kwds):
         """The initialiser for the BlowupCutoff action.
 
         The parameters listed below are only the parameters specific to this
@@ -96,11 +101,11 @@ class BlowupCutoff(Prototype):
         cutoff: float
             The value that is used to test for ending the simulation.
         """
-        super(BlowupCutoff,self).__init__(**kwds)
+        super(BlowupCutoff, self).__init__(**kwds)
         self.cutoff = abs(cutoff)
 
     def above_cutoff(self, u):
-        """Returns true if the absolute value of any component of 
+        """Returns true if the absolute value of any component of
         the data in the timeslice u is above the absolute value of
         the given cutoff.
 
@@ -119,9 +124,10 @@ class BlowupCutoff(Prototype):
                 return True
         return False
 
-    def _doit(self, it,u):
+    def _doit(self, it, u):
         if self.above_cutoff(u):
             raise Exception("Function values are above the cutoff")
+
 
 class Info(Prototype):
     """Logs the current iterations and data slice.

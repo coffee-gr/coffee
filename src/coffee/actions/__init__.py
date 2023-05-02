@@ -7,4 +7,3 @@ Please see the help for the prototype action for implementation details.
 
 from coffee.actions.actions import Prototype, BlowupCutoff, Info
 from coffee.actions.hdf_output import SimOutput
-

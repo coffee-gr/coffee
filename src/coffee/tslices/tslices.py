@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding: utf-8 
+# encoding: utf-8
 """
 A timeslice is the package which contains all data necessary to represent a
 solution of the system at a given point in time.
@@ -37,6 +37,7 @@ import numpy as np
 from future.utils import with_metaclass
 from coffee.backend import backend as be
 
+
 ###############################################################################
 # TimeSlice Abstract Base Class
 ##############################################################################
@@ -47,7 +48,7 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
     TimeSlice objects (which is just about everything).
 
     """
- 
+
     def __init__(self, data, domain, time, name=None, *args, **kwds):
         """Make a TimeSlice instance!
 
@@ -59,9 +60,9 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
         Parameters
         ----------
 
-        data : 
+        data :
             The values of the functions being solved for.
-        domain : 
+        domain :
             The grid over which the values are calcualted.
         time : float
             The time for which the values in data are valid.
@@ -84,27 +85,27 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
     def __repr__(self):
         """Returns a naive string representation of the slice.
 
-        Returns 
+        Returns
         -------
         string
 
         """
-        s = "%s(data = %s, domain = %s, time = %s)"%(
-            self.name, 
-            repr(self.data), 
-            repr(self.domain), 
-            repr(self.time)
+        s = "%s(data = %s, domain = %s, time = %s)" % (
+            self.name,
+            repr(self.data),
+            repr(self.domain),
+            repr(self.time),
         )
         return s
 
     def external_slices(self):
         """Returns a list of tuples that describe boundaries of grids for
-        external boundaries. 
+        external boundaries.
 
-        This is purely for convenience so that users don't need to 
+        This is purely for convenience so that users don't need to
         write tslice.domain.external_slices().
 
-        Returns 
+        Returns
         -------
         list, slices
             The result of a call to self.domain.external_slices(self.data.shape)
@@ -113,14 +114,14 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
         if __debug__:
             self.log.debug("calling self.domain.external_slices")
         return self.domain.external_slices(self.data.shape)
-    
+
     def communicate(self, ghost_point_processor=None, data=None):
         """Returns a list of tuples that describe the boundaries of
         grids for internal boundaries.
 
         This is currently used when the full domain is divided into
         subdomains for use with mpi.
-        This is purely for convenience so that users don't need to 
+        This is purely for convenience so that users don't need to
         write tslice.domain.communicate().
 
         Parameters
@@ -140,7 +141,7 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
         """
         return self.domain.communicate(
             data if data is not None else self.data,
-            ghost_point_processor=ghost_point_processor
+            ghost_point_processor=ghost_point_processor,
         )
 
     def barrier(self):
@@ -159,7 +160,7 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
         Returns
         -------
         tslice.TimeSlice
-            A single timeslice which represents the complete data and 
+            A single timeslice which represents the complete data and
             domain for that point of time.
 
         """
@@ -167,13 +168,13 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
         domain_all = self.domain.full_grid
         r_tslice = self.__class__(data_all, domain_all, self.time)
         if __debug__:
-            self.log.debug("r_tslice is %s"%(repr(r_tslice)))
+            self.log.debug("r_tslice is %s" % (repr(r_tslice)))
         return r_tslice
 
     def __add__(self, other):
         # It is very important that the rv is other + self.data not
         # self.data + other.
-        # The reason (seems) is because as self.data can be an 
+        # The reason (seems) is because as self.data can be an
         # nd.array the sum self.data + other
         # ends up being computed as the elements of self.other
         # plus other, itself an nd.array.
@@ -181,12 +182,11 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
         # Putting other first ensures that if other is a timeslice
         # then the sum isn't distributed over the elements of self.data.
         try:
-            rv =  other + self.data
+            rv = other + self.data
         except:
             raise NotImplementedError(
-                "Addition of %s and %s is not implemented"
-                %(self, other)
-                )
+                "Addition of %s and %s is not implemented" % (self, other)
+            )
         if isinstance(rv, self.__class__):
             return rv
         else:
@@ -200,9 +200,8 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
                 self.data += other
             except:
                 raise NotImplementedError(
-                    "Addition of %s and %s is not implemented"
-                    %(self, other)
-                    )
+                    "Addition of %s and %s is not implemented" % (self, other)
+                )
         return self
 
     def __radd__(self, other):
@@ -213,9 +212,8 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             rv = self.data - other
         except:
             raise NotImplementedError(
-                "Subtraction of %s and %s is not implemented"
-                %(self, other)
-                )
+                "Subtraction of %s and %s is not implemented" % (self, other)
+            )
         return self.__class__(rv, self.domain, self.time)
 
     def __isub__(self, other):
@@ -223,9 +221,8 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             self.data -= other
         except:
             raise NotImplementedError(
-                "In place subraction of %s and %s is not implemented"
-                %(self, other)
-                )
+                "In place subraction of %s and %s is not implemented" % (self, other)
+            )
         return self
 
     def __rsub__(self, other):
@@ -233,19 +230,17 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             r_time_slice = other - self.data
         except:
             raise NotImplementedError(
-                "Reflected subtraction of %s and %s is not implemented"
-                %(other, self)
-                )
+                "Reflected subtraction of %s and %s is not implemented" % (other, self)
+            )
         return r_time_slice
-    
+
     def __mul__(self, other):
         try:
             rv = self.data * other
         except:
             raise NotImplementedError(
-                "Multiplication of %s and %s is not implemented"
-                %(self, other)
-                )
+                "Multiplication of %s and %s is not implemented" % (self, other)
+            )
         return self.__class__(rv, self.domain, self.time)
 
     def __imul__(self, other):
@@ -253,22 +248,20 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             self.data *= other
         except:
             raise NotImplementedError(
-                "In place multiplicatio of %s and %s is not implemented"
-                %(self, other)
-                )
+                "In place multiplicatio of %s and %s is not implemented" % (self, other)
+            )
         return self
 
     def __rmul__(self, other):
         return self * other
-    
+
     def __div__(self, other):
         try:
             rv = self.data / other
         except:
             raise NotImplementedError(
-                "Division of %s and %s is not implemented"
-                %(self, other)
-                )
+                "Division of %s and %s is not implemented" % (self, other)
+            )
         return self.__class__(rv, self.domain, self.time)
 
     def __idiv__(self, other):
@@ -276,11 +269,10 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             self.data /= other
         except:
             raise NotImplementedError(
-                "In place division of %s and %s is not implemented"
-                %(self, other)
-                )
+                "In place division of %s and %s is not implemented" % (self, other)
+            )
         return self
-    
+
     def __truediv__(self, other):
         return self.__div__(other)
 
@@ -289,12 +281,11 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
 
     def __pow__(self, other):
         try:
-            rv = self.data ** other
+            rv = self.data**other
         except:
             raise NotImplementedError(
-                "Exponentiation of %s by %s is not implemented"
-                %(self, other)
-                )
+                "Exponentiation of %s by %s is not implemented" % (self, other)
+            )
         return self.__class__(rv, self.domain, self.time)
 
     def __ipow__(self, other):
@@ -302,10 +293,10 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             self.data **= other
         except:
             raise NotImplementedError(
-                "In place exponentiation of %s by %s is not implemented"
-                %(self, other)
-                )
+                "In place exponentiation of %s by %s is not implemented" % (self, other)
+            )
         return self
+
 
 ###############################################################################
 # Concrete implementations
@@ -327,7 +318,7 @@ class TimeSlice(ABCTimeSlice):
     hasn't been done.
     """
 
-    def __init__(self,data, *args, **kwds):
+    def __init__(self, data, *args, **kwds):
         """Instantiates a TimeSlice object.
 
         Calls the ABCTimeSlice __init__ method after handling the data.
@@ -336,11 +327,11 @@ class TimeSlice(ABCTimeSlice):
 
         Parameters
         ----------
-        data : 
+        data :
             Converts data to a numpy array before passing it on to ABCTimeSlice.
 
         """
         data = be.array(data)
         if "name" not in kwds:
             kwds["name"] = "TimeSlice"
-        super(TimeSlice, self).__init__(data, *args, **kwds) 
+        super(TimeSlice, self).__init__(data, *args, **kwds)
