@@ -213,4 +213,4 @@ for i,system in enumerate(systems):
         start_time = time.time()
         problem.run(tstart, tstop)
         stop_time  = time.time()
-        print("Simulation",i,"took",stop_time-start_time,"seconds.")
+        print(("Simulation",i,"took",stop_time-start_time,"seconds."))
