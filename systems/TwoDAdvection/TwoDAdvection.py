@@ -4,7 +4,8 @@ import numpy as np
 # import our modules
 from coffee.tslices import tslices
 from coffee.system import System
-from coffee.backend import be
+from coffee.backend import backend as be
+be.set_backend("numpy")
 
 class TwoDadvection(System):
 

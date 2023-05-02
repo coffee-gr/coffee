@@ -16,7 +16,7 @@ import abc
 import logging
 
 from coffee.mpi import mpiinterfaces
-from coffee.backend import be
+from coffee.backend import backend as be
 
 ################################################################################
 # Base Boundary data class

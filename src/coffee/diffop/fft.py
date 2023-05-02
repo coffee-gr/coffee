@@ -13,7 +13,7 @@ import numpy as np
 import scipy
 import pyfftw as fftw
 from scipy import fftpack
-from coffee.backend import be
+from coffee.backend import backend as be
 
 class FFT_lagrange(object):
     """Manually calculates the derivative using a cached matrix whose

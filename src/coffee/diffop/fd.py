@@ -13,7 +13,7 @@ See Fornberg's paper for the notation.
 from builtins import object
 import numpy as np
 import logging
-from coffee.backend import be
+from coffee.backend import backend as be
 
 ################################################################################
 # Finite difference default ghost point processor

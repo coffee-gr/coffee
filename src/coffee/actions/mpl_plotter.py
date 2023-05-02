@@ -2,7 +2,7 @@ from builtins import range
 import time
 #from pylab import *
 import pylab
-import numpy as np
+from coffee.backend import backend as be
 
 from coffee.actions import Prototype
 

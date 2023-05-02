@@ -1,8 +1,6 @@
 from builtins import object
-import numpy as np
+from coffee.backend import backend as be
 import logging
-
-
 
 class Prototype(object):
     """The prototype of all actions. 

@@ -5,7 +5,7 @@ from builtins import str
 from builtins import range
 import time
 import os
-import numpy as np
+from coffee.backend import backend as be
 import logging
 
 # Gnuplot currently only works with Python 2!
