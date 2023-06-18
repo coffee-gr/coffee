@@ -26,7 +26,9 @@
 .. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
     :alt: Project generated with PyScaffold
     :target: https://pyscaffold.org/
-
+.. image:: https://readthedocs.org/projects/coffee-gr/badge/?version=latest
+    :target: https://coffee-gr.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 |
 
 ======
