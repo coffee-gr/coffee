@@ -29,7 +29,7 @@
 .. image:: https://readthedocs.org/projects/coffee-gr/badge/?version=latest
     :target: https://coffee-gr.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-|
+
 
 ======
 coffee
