@@ -10,7 +10,6 @@ method for some kind of new data type in a sub class of SimOutputType and
 """
 from builtins import str
 from builtins import object
-import logging
 from coffee.backend import backend as be
 
 from .actions import Prototype
@@ -88,9 +87,6 @@ class SimOutput(Prototype):
         name : string
             What is the name of this simulation?
         """
-        self.log = logging.getLogger("SimOutput")
-        if __debug__:
-            self.log.debug("Setting up HDF output...")
         super(SimOutput, self).__init__(**kwds)
         if name == None:
             hour = str(time.localtime()[3])
@@ -107,16 +103,9 @@ class SimOutput(Prototype):
         self.cmp_ = cmp_
         for action in actionTypes:
             action.setup(self)
-        if __debug__:
-            self.log.debug("HDF output setup completed.")
 
     def _doit(self, it, u):
-        for action in self.actions:
-            if __debug__:
-                self.log.debug("Outputting %s" % action.groupname)
-            action(it, u)
-            if __debug__:
-                self.log.debug("Output done")
+        pass
 
     class SimOutputType(object):
         """If you want to customise the output to the hdf file subclass this
@@ -176,13 +165,10 @@ class SimOutput(Prototype):
                 )
             self.parent = parent
             self.data_group.attrs["cmp"] = parent.cmp_
-            self.log = logging.getLogger(self.groupname)
 
         def __call__(self, it, u):
             for key, value in list(self.derivedAttrs.items()):
                 v = value(it, u, self.parent.system)
-                if __debug__:
-                    self.log.debug("Derived Attrs = %s" % str(v))
                 self.data_group[it].attrs[key] = v
 
     class Data(SimOutputType):

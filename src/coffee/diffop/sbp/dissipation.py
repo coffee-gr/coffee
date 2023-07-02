@@ -4,14 +4,8 @@
 A module that contains dissipation operators for SBP operators.
 """
 
-# import sys
-# import os
-# import unittest
 import math
-import numpy as np
 import abc
-import logging
-
 
 ################################################################################
 # Base classes for SBP artificial dissipation operators
@@ -31,11 +25,7 @@ class Diss(object):
     def _consistancy_check(self, u, shape):
         r, c = shape
         if u.shape[0] + 1 <= 2 * c:
-            self.log.error("Domain too small for application of operator")
             raise ValueError("Domain too small for application of operator")
-        if __debug__:
-            self.log.debug("Boundary region r = %s, c = %s" % (r, c))
-            self.log.debug("Array to operate on is = %s" % repr(u))
 
     def __str__(self):
         return "SBP Dissipation operator" % self.name
@@ -48,30 +38,19 @@ class DissDiag(Diss):
 
     def __init__(self):
         self.bdyRegion = self.Ql.shape
-        self.log = logging.getLogger("DissDiag")
 
     def __call__(self, u, dx, boundary_ID=None):
         super(DissDiag, self)._consistancy_check(u, self.bdyRegion)
         r, c = self.bdyRegion
         diss_u = be.zeros_like(u)
         diss_u = be.convolve(u, self.A, mode="same")
-        if __debug__:
-            self.log.debug("After convolve: diss_u = %s" % repr(diss_u))
         if boundary_ID is None:
             diss_u[0:r] = be.dot(self.Ql, u[0:c])
             diss_u[-r:] = be.dot(self.Qr, u[-c:])
-            if __debug__:
-                self.log.debug("Applying both boundary region computation")
         elif boundary_ID == grid.LEFT:
             diss_u[0:r] = be.dot(self.Ql, u[0:c])
-            if __debug__:
-                self.log.debug("Applying left boundary region computation")
         elif boundary_ID == grid.RIGHT:
             diss_u[-r:] = be.dot(self.Qr, u[-c:])
-            if __debug__:
-                self.log.debug("Applying right boundary region computation")
-        if __debug__:
-            self.log.debug("After boundary conditions: diss_u = %s" % repr(diss_u))
         factor = math.pow(0.5, 2 * self.p)
         return factor * diss_u
 
@@ -91,7 +70,6 @@ class DissRestFull(Diss):
         """
         self.bdyRegion = self.Ql.shape
         self.p = p
-        self.log = logging.getLogger("DissRestFull")
 
     def __call__(self, u, dx, boundary_ID=None):
         """Applies the operator.
@@ -171,16 +149,8 @@ class DissRestFull(Diss):
         # the matrix A.
         diss_u_int = be.zeros_like(u)
         diss_u_int[r:-r] = be.convolve(u, self.A, mode="valid")
-        if __debug__:
-            self.log.debug("A.u = %s" % repr(diss_u_int))
         for i in range(size):
             diss_u_int[i] = self.B(i, dx, size) * diss_u_int[i]
-        if __debug__:
-            B_string = "[ "
-            for i in range(size - 1):
-                B_string += "%f, " % diss_u_int[i]
-            B_string += "%f ]" % diss_u_int[size - 1]
-            self.log.debug("B.A.u = " + B_string)
 
         # To multiply my Transpose[A], requires some care. The zero'd rows now
         # become columns and the stencil is reversed. I make here the assumption
@@ -212,61 +182,35 @@ class DissRestFull(Diss):
         diss_u_int = be.convolve(
             diss_u_int[r:-r], math.pow(-1, self.p) * self.A[::-1], mode="full"
         )
-        if __debug__:
-            self.log.debug("Transpose[A].B.A.u = %s" % repr(diss_u_int))
 
         # Second do the boundary convolution
         # The check at the beginning of the method ensures that the
         # two array's diss_u_b[0:r] and diss_u_b[-r:] do not share any points
         # of diss_u_b
         diss_u_b = be.zeros_like(u)
-        if __debug__:
-            self.log.debug("After convolve: diss_u = %s" % repr(diss_u))
         if boundary_ID is None:
             diss_u_b[0:r] = be.dot(self.Ql, u[0:c])
             diss_u_b[-r:] = be.dot(self.Qr, u[-c:])
-            if __debug__:
-                self.log.debug("Q.u = %s" % repr(diss_u_b))
             for i in range(size):
                 diss_u_b[i] = self.B(i, dx, size) * diss_u_b[i]
-            if __debug__:
-                B_string = "[ "
-                for i in range(size - 1):
-                    B_string += "%f, " % diss_u_b[i]
-                B_string += "%f ]" % diss_u_b[size - 1]
-                self.log.debug("B.Q.u = " + B_string)
             diss_u_b[0:c] = be.dot(diss_u_b[0:r], self.Ql)
             diss_u_b[-c:] = be.dot(diss_u_b[-r:], self.Qr)
-            if __debug__:
-                self.log.debug("Transpose[Q].B.Q.u = %s" % repr(diss_u_b))
-            if __debug__:
-                self.log.debug("Applying both boundary region computation")
         elif boundary_ID == grid.LEFT:
             diss_u[0:r] = be.dot(self.Ql, u[0:c])
             for i in range(size):
                 diss_u_b[i] = self.B(i, dx, size) * diss_u_b[i]
             diss_u_b[0:c] = be.dot(diss_u_b[0:r], self.Ql)
-            if __debug__:
-                self.log.debug("Applying left boundary region computation")
         elif boundary_ID == grid.RIGHT:
             diss_u[-r:] = be.dot(self.Qr, u[-c:])
             for i in range(size):
                 diss_u_b[i] = self.B(i, dx, size) * diss_u_b[i]
             diss_u_b[-c:] = be.dot(diss_u_b[-r:], self.Qr)
-            if __debug__:
-                self.log.debug("Applying right boundary region computation")
-        if __debug__:
-            self.log.debug("After boundary conditions: diss_u = %s" % repr(diss_u))
 
         # Add the two parts together and multiply by the appropriate
         # numerical factor.
         diss_u = diss_u_int + diss_u_b
-        if __debug__:
-            self.log.debug("Transpose[M].B.M.u = %s" % repr(diss_u))
         factor = math.pow(0.5, 2 * self.p) * math.pow(dx, 2 * self.p - 2)
         diss_u = -factor * diss_u
-        if __debug__:
-            self.log.debug("D(u,dx) = %s" % repr(diss_u))
 
         # Multiply by the inverse of the norm
         super(DissRestFull, self)._consistancy_check(u, self.norm_inv.shape)
@@ -434,14 +378,3 @@ class Diss43_DDST(DissRestFull):
             return 1 + (cut_off + 1 - size + i) * (dx - 1) / cut_off
         else:
             return 1
-
-
-################################################################################
-# Testing
-################################################################################
-
-# if __name__ == "__main__":
-# D = Diss43_DDST(0.2)
-# u = be.arange(20, dtype=float)
-# u = 10 - (u - 5)**2
-# D(u, 0.1)

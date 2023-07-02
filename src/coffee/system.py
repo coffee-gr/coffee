@@ -16,7 +16,6 @@ system.System has abc.ABCMeta as a meta class. This serves as a warning to
 really think about what you are doing if you don't implement all methods below.
 """
 
-import abc
 from abc import ABCMeta
 
 

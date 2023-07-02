@@ -4,9 +4,7 @@
 A module to manage summation by parts finite difference operators.
 """
 
-import os
 import math
-import numpy as np
 import logging
 from coffee.backend import backend as be
 
@@ -93,33 +91,17 @@ class SBP(object):
             boundary.
         """
         r, c = self.bdyRegion
-        if __debug__:
-            self.log.debug("u.shape[0] = %s" % repr(u.shape[0]))
-            self.log.debug("c = %s" % repr(c))
         if u.shape[0] + 1 <= 2 * c:
             self.log.error("Domain too small for application of operator")
             raise ValueError("Domain too small for application of operator")
-        if __debug__:
-            self.log.debug("Boundary region r = %s, c = %s" % (r, c))
-            self.log.debug("Array to operate on is = %s" % repr(u))
         du = be.convolve(u, self.A, mode="same")
-        if __debug__:
-            self.log.debug("After convolve: du = %s" % repr(du))
         if boundary_ID is None:
             du[0:r] = be.dot(self.Ql, u[0:c])
             du[-r:] = be.dot(self.Qr, u[-c:])
-            if __debug__:
-                self.log.debug("Applying both boundary region computation")
         elif boundary_ID == grid.LEFT:
             du[0:r] = be.dot(self.Ql, u[0:c])
-            if __debug__:
-                self.log.debug("Applying left boundary region computation")
         elif boundary_ID == grid.RIGHT:
             du[-r:] = be.dot(self.Qr, u[-c:])
-            if __debug__:
-                self.log.debug("Applying right boundary region computation")
-        if __debug__:
-            self.log.debug("After boundary conditions: du = %s" % repr(du))
         return du / (dx**self.order)
 
     def penalty_boundary(self, dx, vector_selection):

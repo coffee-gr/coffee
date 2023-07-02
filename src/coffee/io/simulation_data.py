@@ -17,7 +17,6 @@ from builtins import range
 from builtins import object
 import functools
 import h5py
-import numpy as np
 from coffee.backend import backend as be
 
 # Gnuplot currently only works with Python 2!

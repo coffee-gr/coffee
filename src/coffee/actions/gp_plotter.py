@@ -6,7 +6,6 @@ from builtins import range
 import time
 import os
 from coffee.backend import backend as be
-import logging
 
 # Gnuplot currently only works with Python 2!
 try:
@@ -81,41 +80,25 @@ class Plotter1D(Prototype):
         if "title" in kwds:
             self.title = kwds.pop("title")
         self.system = system
-        self.log = logging.getLogger("Plotter1D")
         try:
             if kwds["data_function"] is not None:
                 self.datafunc = kwds.pop("data_function")
             else:
                 self.datafunc = lambda y, x, z: (x.domain.axes[0], x.data)
         except:
-            self.datafunc = lambda y, x, z: (x.domain.axes[0], x.data)
-        if __debug__:
-            self.log.debug("Initialising plotter...")
+            self.datafunc = lambda y, x, z: (x.domain.axes[0], x.data))
         super(Plotter1D, self).__init__(frequency=frequency, start=start, **kwds)
         self.Device = Gnuplot.Gnuplot()
         g = self.Device
         for arg in args:
             g(arg)
-        if __debug__:
-            self.log.debug("Done.-")
 
     def _doit(self, it, u):
         g = self.Device
-        if __debug__:
-            self.log.debug("Plotting iteration %i with data %s" % (it, str(u)))
         x, f = self.datafunc(it, u, self.system)
         f = be.atleast_2d(f)
-        if __debug__:
-            self.log.debug("Data after processing by self.datafunc is %s" % f)
-            self.log.debug("Shape of domain to plot over is %s" % x.shape)
-            self.log.debug("Domain to plot over is %s" % repr(x))
         graphs = []
         g("set title '" + self.title % u.time + "'")
-        for i, val in enumerate(f):
-            if __debug__:
-                self.log.debug("Shape of data to be plotted is %s" % val.shape)
-                self.log.debug("Data to be plotted is %s" % repr(val))
-            graphs += [Gnuplot.Data(x, val, title="Component %i" % i)]
         g.plot(*graphs)
         time.sleep(self.delay)
 
@@ -188,7 +171,6 @@ class Plotter2D(Prototype):
             self.components = None
 
         self.system = kwds.pop("system")
-        self.log = logging.getLogger("Plotter2D")
         try:
             if kwds["data_function"] is not None:
                 self.datafunc = kwds.pop("data_function")
@@ -197,27 +179,14 @@ class Plotter2D(Prototype):
         except:
             self.datafunc = lambda y, x, z: (x.domain.axes, x.data)
 
-        #        if __debug__:
-        #            self.log.debug("Initialising plotter...")
         self.device = Gnuplot.Gnuplot()
         for arg in args:
             self.device(arg)
-        super(Plotter2D, self).__init__(**kwds)
-
-    #        if __debug__:
-    #            self.log.debug("Done.-")
+        super(Plotter2D, self).__init__(**kwds))
 
     def _doit(self, it, u):
-        if __debug__:
-            self.log.debug("Plotting iteration %i with data %s" % (it, str(u)))
         x, f = self.datafunc(it, u, self.system)
         f = be.atleast_2d(f)
-        if __debug__:
-            self.log.debug("Data after processing by self.datafunc is %s" % f)
-            self.log.debug(
-                "Shape of domain to plot over is (%s,%s)"
-                % (x[0].shape[0], x[1].shape[0])
-            )
         graphs = []
         self.device('set title "%s" enhanced' % self.title % (it, u.time))
         for i in range(f.shape[0]):

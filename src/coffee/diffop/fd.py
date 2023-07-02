@@ -11,27 +11,16 @@ See Fornberg's paper for the notation.
 """
 
 from builtins import object
-import numpy as np
-import logging
 from coffee.backend import backend as be
-
 
 ################################################################################
 # Finite difference default ghost point processor
 ################################################################################
-def ghost_point_processor(data, b_values, log=None):
+def ghost_point_processor(data, b_values):
     """A utility function that understands how data defined over ghost points
     for finite difference stencils should be handled when communicated via MPI."""
-    if __debug__ and log:
-        log.debug("original data is " + repr(data))
     for b_slice, b_data in b_values:
-        if __debug__ and log:
-            log.debug("b_slice is %s" % (repr(b_slice)))
-            log.debug("b_data is %s" % (repr(b_data)))
         data[b_slice] = b_data
-    if __debug__ and log:
-        log.debug("new data is " + repr(data))
-
 
 ################################################################################
 # Finite difference stencil base class.
@@ -248,7 +237,7 @@ class FD_diffop(object):
     name = "FD_diffop"
 
     def __init__(self):
-        self.log = logging.getLogger("FD")
+        pass
 
     def __call__(self, u, dx):
         """Gives the result of the linear operator represented by this
@@ -268,8 +257,6 @@ class FD_diffop(object):
         """
         ru = self.central(u)
         for i, b in self.boundaries:
-            if __debug__:
-                self.log.debug("Applying boundary: i = " + repr(i) + ", b = " + repr(b))
             ru[i] = b(u, apply_at=i)
         return ru / (dx**self.order)
 
