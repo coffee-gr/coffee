@@ -86,7 +86,7 @@ class Plotter1D(Prototype):
             else:
                 self.datafunc = lambda y, x, z: (x.domain.axes[0], x.data)
         except:
-            self.datafunc = lambda y, x, z: (x.domain.axes[0], x.data))
+            self.datafunc = lambda y, x, z: (x.domain.axes[0], x.data)
         super(Plotter1D, self).__init__(frequency=frequency, start=start, **kwds)
         self.Device = Gnuplot.Gnuplot()
         g = self.Device
@@ -182,7 +182,7 @@ class Plotter2D(Prototype):
         self.device = Gnuplot.Gnuplot()
         for arg in args:
             self.device(arg)
-        super(Plotter2D, self).__init__(**kwds))
+        super(Plotter2D, self).__init__(**kwds)
 
     def _doit(self, it, u):
         x, f = self.datafunc(it, u, self.system)

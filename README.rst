@@ -36,13 +36,13 @@ coffee
 ======
 
 
-    COFFEE is an MPI-Parallelised Python package for the numerical evolution of time-dependent differential equations.
+COFFEE is an MPI-Parallelised Python package for the numerical evolution of time-dependent differential equations.
 
 
 Installation
 ------------
 
-    There are four versions of COFFEE, which can include MPI and/or JAX capabilities. These can be installed via
+There are four versions of COFFEE, which can include MPI and/or JAX capabilities. These can be installed via
 
     pip install coffeegrinder
     pip install coffeegrinder[MPI]
@@ -51,7 +51,7 @@ Installation
 
 .. rubric:: Getting started
 
-    There is a systems directory that includes commented test cases for the 1D advection equation with a mixture of finite-differencing operators and boundary imposition methods.
+There is a systems directory that includes commented test cases for the 1D advection equation with a mixture of finite-differencing operators and boundary imposition methods.
 
 .. _pyscaffold-notes:
 
