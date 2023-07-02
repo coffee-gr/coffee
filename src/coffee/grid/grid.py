@@ -10,14 +10,14 @@ Each grid object understands it's own discretisation as well as how
 
 from builtins import range
 from builtins import object
-import math
-import numpy as np
 import abc
-import logging
 
-from coffee.mpi import mpiinterfaces
+try:
+    from coffee.mpi import mpiinterfaces
+except ModuleNotFoundError:
+    pass
+
 from coffee.backend import backend as be
-
 
 ################################################################################
 # Base Boundary data class
@@ -231,8 +231,6 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
         # This implicitly assumes that the number of dimensions handled by
         # the grid object is the same as than managed by the mpi_comm
         dims = self.mpi_comm.Get_dim()
-        if __debug__:
-            self.log.debug("Shape = " + repr(shape))
         neg_slices = [
             (i, -1, self.external_slice(shape, i, -1))
             for i in range(dims)
@@ -243,8 +241,6 @@ class ABCBoundary(object, metaclass=abc.ABCMeta):
             for i in range(dims)
             if self.external_slice(shape, i, 1) != self._empty_slice(len(shape))
         ]
-        if __debug__:
-            self.log.debug("external slices are = " + repr(pos_slices + neg_slices))
         return pos_slices + neg_slices
 
 
@@ -303,7 +299,6 @@ class MPIBoundary(ABCBoundary):
         self._ghost_points = ghost_points
         self._internal_points = internal_points
         self.mpi_comm = mpi_comm
-        self.log = logging.getLogger("MPIBoundary")
 
     def ghost_points(self, dimension, direction):
         "See ABCBoundary.ghost_points() for documentation." ""
@@ -525,7 +520,6 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
         self.mpi = mpi
         self.dim = len(shape)
         self.name = name
-        self.log = logging.getLogger(name)
         self.comparison = comparison
         self.shape = shape
         self.bounds = bounds
@@ -585,8 +579,6 @@ class ABCGrid(object, metaclass=abc.ABCMeta):
 
         See ABCBoundary.external_slices() for documentation.
         """
-        if __debug__:
-            self.log.debug("In grid.external_slices")
         return self.boundary_data.external_slices(data_shape)
 
     def collect_data(self, data):

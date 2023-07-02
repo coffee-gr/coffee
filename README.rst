@@ -42,21 +42,16 @@ coffee
 Installation
 ------------
 
-To use this software, you will need the following dependencies:
+    There are four versions of COFFEE, which can include MPI and/or JAX capabilities. These can be installed via
 
-- 
-- HDF library
-
-Please make sure these dependencies are installed before using this software.
+    pip install coffeegrinder
+    pip install coffeegrinder[MPI]
+    pip install coffeegrinder[JAX]
+    pip install coffeegrinder[MPI-JAX]
 
 .. rubric:: Getting started
 
-One needs to point the ``PYTHONPATH`` environment variable to the packages directory. Then the system code can be run with::
-
-    python3.10 -O TwoDAdvection_setup.py
-
-Note that adding a ``-d`` flag to this allows you to see a visualization during the computation. You should see a wave propagating from right to left with varying amplitude.
-
+    There is a systems directory that includes commented test cases for the 1D advection equation with a mixture of finite-differencing operators and boundary imposition methods.
 
 .. _pyscaffold-notes:
 

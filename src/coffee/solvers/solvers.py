@@ -10,8 +10,6 @@ operated on by numerically (e.g. addition, multiplication, subtraction).
 
 
 from builtins import object
-import math
-import logging
 import abc
 
 from coffee.tslices import tslices
@@ -41,7 +39,6 @@ class ABCSolver(object):
         """
         self.system = system
         super(ABCSolver, self).__init__(**kwds)
-        self.log = logging.getLogger(self.name)
 
     @abc.abstractproperty
     def name(self):
@@ -214,38 +211,25 @@ class RungeKutta4(ABCSolver):
         Very simple minded implementation of the standard 4th order Runge-Kutta
         method to solve an ODE of the form fdot = rhs(t,f)
         """
-        if __debug__:
-            self.log.debug("In advance")
-            self.log.debug("time = %s" % repr(t0))
-            self.log.debug("data = %s" % (repr(u0)))
-            self.log.debug("dt = %s" % repr(dt))
         eqn = self.system
         u = u0
         t = t0
         k = eqn.evaluate(t, u)
-        if __debug__:
-            self.log.debug("First evaluate, k = %s" % repr(k))
         u1 = u0 + (dt / 6.0) * k
 
         u = u0 + dt / 2.0 * k
         t = t0 + dt / 2.0
         k = eqn.evaluate(t, u)
-        if __debug__:
-            self.log.debug("Second evaluate, k = %s" % repr(k))
         u1 += dt / 3.0 * k
 
         u = u0 + dt / 2.0 * k
         t = t0 + dt / 2.0
         k = eqn.evaluate(t, u)
-        if __debug__:
-            self.log.debug("Third evaluate, k = %s" % repr(k))
         u1 += dt / 3.0 * k
 
         u = u0 + dt * k
         t = t0 + dt
         k = eqn.evaluate(t, u)
-        if __debug__:
-            self.log.debug("Fourth evaluate, k = %s" % repr(k))
         u1 += dt / 6.0 * k
         u1.time = t
 

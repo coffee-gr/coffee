@@ -1,6 +1,5 @@
 from builtins import object
 from coffee.backend import backend as be
-import logging
 
 
 class Prototype(object):
@@ -141,8 +140,7 @@ class Info(Prototype):
         All parameters as given for the initialiser for the
         actions.Prototype action are valid.
         """
-        self.log = logging.getLogger("Info")
         super(Info, self).__init__(*args, **kwds)
 
     def _doit(self, it, u):
-        self.log.info("Iteration: %d, Time: %f" % (it, u.time))
+        pass

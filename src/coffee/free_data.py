@@ -21,7 +21,6 @@ all calls to FreeData are mediated through system.System.
 import abc
 from abc import ABCMeta
 
-
 class FreeData(object, metaclass=ABCMeta):
     """This is a simple abstract base class for the implementation of exact
     solutions.

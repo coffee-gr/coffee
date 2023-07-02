@@ -32,10 +32,7 @@ that you can restart a simulation if given a timeslice, system and solver.
 
 from builtins import object
 import abc
-import logging
-import numpy as np
 from coffee.backend import backend as be
-
 
 ###############################################################################
 # TimeSlice Abstract Base Class
@@ -78,7 +75,6 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             self.name = "ABCTimeSlice"
         else:
             self.name = name
-        self.log = logging.getLogger(self.name)
         super(ABCTimeSlice, self).__init__(*args, **kwds)
 
     def __repr__(self):
@@ -110,8 +106,6 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
             The result of a call to self.domain.external_slices(self.data.shape)
 
         """
-        if __debug__:
-            self.log.debug("calling self.domain.external_slices")
         return self.domain.external_slices(self.data.shape)
 
     def communicate(self, ghost_point_processor=None, data=None):
@@ -166,8 +160,6 @@ class ABCTimeSlice(object, metaclass=abc.ABCMeta):
         data_all = self.domain.collect_data(self.data)
         domain_all = self.domain.full_grid
         r_tslice = self.__class__(data_all, domain_all, self.time)
-        if __debug__:
-            self.log.debug("r_tslice is %s" % (repr(r_tslice)))
         return r_tslice
 
     def __add__(self, other):
