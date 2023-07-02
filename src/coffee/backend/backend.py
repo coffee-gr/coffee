@@ -179,7 +179,7 @@ class BackendBase:
 
 class NumpyBackend(BackendBase):
     def __init__(self):
-        print("Initialising Numpy Backend")
+        # print("Initialising Numpy Backend")
         try:
             import numpy as np
         except ImportError:
