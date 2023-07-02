@@ -36,7 +36,7 @@ coffee
 ======
 
 
-    Add a short description here!
+    COFFEE is an MPI-Parallelised Python package for the numerical evolution of time-dependent differential equations.
 
 
 Installation
@@ -44,11 +44,7 @@ Installation
 
 To use this software, you will need the following dependencies:
 
-- fitsio C library
-- chealpix C library
-- mpich or Open MPI
-- pyFFTW
-- gnuplot + appropriate terminal if needed
+- 
 - HDF library
 
 Please make sure these dependencies are installed before using this software.

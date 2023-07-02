@@ -34,7 +34,6 @@ from builtins import object
 import abc
 import logging
 import numpy as np
-from future.utils import with_metaclass
 from coffee.backend import backend as be
 
 

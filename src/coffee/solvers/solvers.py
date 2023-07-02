@@ -9,7 +9,6 @@ operated on by numerically (e.g. addition, multiplication, subtraction).
 """
 
 
-from past.utils import old_div
 from builtins import object
 import math
 import logging
@@ -163,7 +162,7 @@ class ImplicitEuler(ABCSolver):
             df = 1.0 - dt * dg
 
             # Compute next value of u_next
-            next_u_next = prev_u_next - old_div(f, df)
+            next_u_next = prev_u_next - (f / df)
 
             # If we get to within a certain accuracy of the root stop
             if all(abs(next_u_next - prev_u_next)[0] < TOL):
