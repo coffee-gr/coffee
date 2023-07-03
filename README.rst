@@ -32,7 +32,7 @@
 
 
 ======
-coffee
+COFFEE
 ======
 
 
@@ -44,9 +44,9 @@ Installation
 
 There are four versions of COFFEE, which can include MPI and/or JAX capabilities. These can be installed via
 
-    pip install coffeegrinder |br|
-    pip install coffeegrinder[MPI] |br|
-    pip install coffeegrinder[JAX] |br|
+    pip install coffeegrinder  
+    pip install coffeegrinder[MPI]  
+    pip install coffeegrinder[JAX]  
     pip install coffeegrinder[MPI-JAX]
 
 Getting started
