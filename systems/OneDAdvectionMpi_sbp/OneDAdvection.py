@@ -3,10 +3,9 @@
 
 
 """
-g_wave.py
+OneDAdvection.py
 
-Created by Chris Stevens 2022
-Copyright (c) 2022 University of Canterbury. All rights reserved.
+Created by Chris Stevens 2023
 """
 
 # Import Python libraries
@@ -83,8 +82,8 @@ class OneDAdvection(System):
 			else:
 				DtPsi[:pt_l_shape]  -= C_left * (Psi[0] - l_Psi)
 
-		# Keep track of time
-		print('t =', t)
+		# Output time if desired
+		# print('t =', t)
 
 		# Return RHS of evolution equation with SAT boundary condition imposed
 		return tslices.TimeSlice([DtPsi], U.domain, time = t)

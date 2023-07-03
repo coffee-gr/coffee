@@ -63,8 +63,8 @@ class OneDAdvection(System):
 		# Evaluate right hand side
 		DtPsi = -self.char_speed*DxPsi
 
-		# Keep track of time
-		print('t =', t)
+		# Output time if desired
+		# print('t =', t)
 
 		# Return RHS of evolution equation
 		return tslices.TimeSlice([DtPsi], U.domain, time = t)

@@ -1,4 +1,14 @@
-#import python libraries
+#!/usr/bin/env python
+# encoding: utf-8
+
+
+"""
+OneDAdvection_setup.py
+
+Created by Chris Stevens 2023
+"""
+
+# Import python libraries
 from builtins import range
 import sys
 import os
@@ -7,14 +17,14 @@ import h5py
 import argparse
 from mpi4py import MPI
 
-#Import standard code base
+# Import standard code base
 from coffee.backend import backend as be
 be.set_backend("numpy")
 
 from coffee import ibvp, actions, solvers, grid
 from coffee.diffop.sbp import sbp
 
-#import system to use
+# Import system to use
 import OneDAdvection
 import OneDAdvection_plotter as plotter
 
@@ -23,6 +33,7 @@ np.set_printoptions(threshold=np.inf, precision=16)
 ################################################################################
 # Parser settings 
 ################################################################################
+
 # Initialise parser
 parser = argparse.ArgumentParser(description=\
 """This program numerically solves an IBVP for a simple advection equation.""")
@@ -34,18 +45,19 @@ parser.add_argument('-d','-display', default = False,
     action='store_true', help=\
 """A flag to indicate if visual display is required.""")
 args = parser.parse_args()
+
 ################################################################################  
 # These are the commonly altered settings
 ################################################################################
 
-#output settings
+# Output settings
 store_output = args.f is not None
 display_output = args.d
 if store_output and args.f is None:
     print("OneDAdvection_setup.py: error: argument -f/-file is required")
     sys.exit(1)
 
-# file settings
+# File settings
 if store_output:
     args.f = os.path.abspath(args.f)
     try:
@@ -73,12 +85,16 @@ tstop  = 10.
 CFL = 0.5
 tau = 1.0
 
-# Select diffop
+# Differential operator
 diffop = sbp.D43_Strand(sbp.BOUNDARY_TYPE_GHOST_POINTS)
+# diffop = sbp.D42(sbp.BOUNDARY_TYPE_GHOST_POINTS)
+# diffop = sbp.D43_Tiglioetal(sbp.BOUNDARY_TYPE_GHOST_POINTS)
+# diffop = sbp.D43_CNG(sbp.BOUNDARY_TYPE_GHOST_POINTS)
 
 ################################################################################      
 ## MPI set up                                                                         
 ################################################################################ 
+
 dims     = MPI.Compute_dims(MPI.COMM_WORLD.size, [0])                                    
 periods  = [0]                                                                        
 reorder  = True                                                                       
@@ -87,8 +103,9 @@ mpi_comm = MPI.COMM_WORLD.Create_cart(dims, periods=periods, reorder=reorder)
 ################################################################################
 # Grid construction
 ################################################################################
+
 # Grid point data      
-raxis_gdp = [N*2**i for i in range(num_of_grids)]
+res = [N*2**i for i in range(num_of_grids)]
 
 # Determine the boundary data
 ghost_points = (diffop.ghost_points(),)
@@ -103,9 +120,9 @@ b_data = grid.MPIBoundary(
 # Build grids
 grids = [
     grid.UniformCart(
-        (raxis_gdp[i],), 
+        (res[i],), 
         [[xstart,xstop]],
-        comparison = raxis_gdp[i],
+        comparison = res[i],
         mpi_comm = mpi_comm,
         boundary_data=b_data
     ) 
@@ -115,6 +132,7 @@ grids = [
 ################################################################################
 # Initialise systems
 ################################################################################
+
 char_speed = 1. # Must be positive
 systems = []
 for i in range(num_of_grids):
@@ -129,12 +147,14 @@ maxIteration = 10000000
 ################################################################################
 # Set up hdf file to store output
 ################################################################################
+
 if store_output and mpi_comm.rank==0:
     hdf_file = h5py.File(args.f,"w")
 
 ################################################################################
 # Set up action types for data storage in hdf file
 ################################################################################
+
 output_actions = [
     actions.SimOutput.Data(),
     actions.SimOutput.Times(),
@@ -145,7 +165,9 @@ output_actions = [
 ################################################################################
 # Perform computation
 ################################################################################
+
 for i, system in enumerate(systems):
+        
         #Construct Actions
         actionList = []
         if display_output and mpi_comm.rank == 0:
@@ -169,6 +191,8 @@ for i, system in enumerate(systems):
                 name = grids[i].name,\
                 cmp_ = grids[i].comparison\
                 )]
+            
+        # Construct and run problem
         problem = ibvp.IBVP(solvers[i], system, grid = grids[i],\
                 maxIteration = 1000000, action = actionList,\
                 minTimestep = 1e-12)
