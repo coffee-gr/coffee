@@ -64,8 +64,8 @@ class OneDAdvection(System):
 		l_Psi    = self.left(t)
 		DtPsi[0] -= C_left * (Psi[0] - l_Psi)
 
-		# Keep track of time
-		print('t =', t)
+		# Output time if desired
+		# print('t =', t)
 
 		# Return RHS of evolution equation with SAT boundary condition imposed
 		return tslices.TimeSlice([DtPsi], U.domain, time = t)
