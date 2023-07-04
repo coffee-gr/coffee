@@ -105,7 +105,8 @@ class SimOutput(Prototype):
             action.setup(self)
 
     def _doit(self, it, u):
-        pass
+        for action in self.actions:
+            action(it,u)
 
     class SimOutputType(object):
         """If you want to customise the output to the hdf file subclass this
