@@ -11,7 +11,7 @@ See Fornberg's paper for the notation.
 """
 
 from builtins import object
-from coffee.backend import backend as be
+from coffee.settings import be
 
 ################################################################################
 # Finite difference default ghost point processor

@@ -1,2 +1,0 @@
-mpich or open-mpi
-hdf library

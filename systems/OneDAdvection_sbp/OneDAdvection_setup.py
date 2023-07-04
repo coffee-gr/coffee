@@ -16,9 +16,11 @@ import numpy as np
 import h5py
 import argparse
 
-# Import standard code base
+# Import standard code base and initialize NumPy backend
+from coffee.settings import init
 from coffee.backend import backend as be
-be.set_backend("numpy")
+my_backend = be.set_backend("numpy")
+init(my_backend)
 
 from coffee import ibvp, actions, solvers, grid
 from coffee.diffop.sbp import sbp

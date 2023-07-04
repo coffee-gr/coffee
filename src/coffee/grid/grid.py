@@ -17,7 +17,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-from coffee.backend import backend as be
+from coffee.settings import be
 
 ################################################################################
 # Base Boundary data class

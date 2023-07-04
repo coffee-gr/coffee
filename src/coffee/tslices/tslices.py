@@ -32,7 +32,7 @@ that you can restart a simulation if given a timeslice, system and solver.
 
 from builtins import object
 import abc
-from coffee.backend import backend as be
+from coffee.settings import be
 
 ###############################################################################
 # TimeSlice Abstract Base Class

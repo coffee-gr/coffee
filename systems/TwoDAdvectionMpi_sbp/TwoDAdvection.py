@@ -9,9 +9,9 @@ Created by Chris Stevens 2023
 """
 
 # Import Python libraries
-import numpy as np
 from functools import partial
 
+from coffee.settings import be
 from coffee.tslices import tslices
 from coffee.system import System
 from coffee.diffop.fd import ghost_point_processor
@@ -20,9 +20,9 @@ from coffee.diffop.fd import ghost_point_processor
 def bump(t, grid, grid_global):
 	start = grid_global[0]
 	stop  = grid_global[-1]
-	return np.sin(np.pi*start / (start - stop) - \
-	       np.pi / (start - stop)*grid)**8.* \
-		   np.sin(8.*t)**7.
+	return be.sin(be.pi*start / (start - stop) - \
+	       be.pi / (start - stop)*grid)**8.* \
+		   be.sin(8.*t)**7.
 
 # Class that describes a simple advection equation
 class TwoDAdvection(System):
@@ -72,12 +72,12 @@ class TwoDAdvection(System):
 
 		# Calculate spatial derivatives by applying the 1D FD operators
 		# over the mesh
-		DxPsi = np.apply_along_axis(
+		DxPsi = be.apply_along_axis(
 			lambda f:self.Dx(f, dx),
 			0, 
 			Psi
 			)
-		DyPsi = np.apply_along_axis(
+		DyPsi = be.apply_along_axis(
 			lambda f:self.Dy(f, dy),
 			1, 
 			Psi
@@ -86,7 +86,7 @@ class TwoDAdvection(System):
 		# Communicate spatial derivative through neighbouring MPI process(es)
 		new_derivatives, _ = U.communicate(
 			partial(ghost_point_processor),
-			data=np.array([
+			data=be.array([
 				DxPsi, DyPsi
 			])
 		)
@@ -129,7 +129,7 @@ class TwoDAdvection(System):
 
 		# Set initial data
 		x   = grid.meshes[0]
-		Psi = np.zeros_like(x)
+		Psi = be.zeros_like(x)
 
 		# Return Timeslice object
 		return tslices.TimeSlice([Psi], grid, time = t0)

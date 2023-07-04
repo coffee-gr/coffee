@@ -2,20 +2,25 @@
 # encoding: utf-8
 
 """
-Methods that wrap common computations
+Methods that wrap common computations.
 """
-
 
 class Backend:
     def __init__(self):
         self.backend_name = None
-        self._backend = None
+        self.backend = None
 
     def set_backend(self, backend_name="numpy"):
         self.backend_name = backend_name
-        self._backend = self._get_backend(backend_name)
+        self.backend = self.get_backend(backend_name)
 
-    def _get_backend(self, backend_name):
+        # Set constants
+        self.pi = self.backend.pi
+
+        # Return backend instance
+        return self.backend
+
+    def get_backend(self, backend_name):
         """
         Returns an instance of the specified backend class.
 
@@ -44,127 +49,133 @@ class Backend:
         return backends[backend_name]()
 
     def abs(self, *args, **kwargs):
-        return self._backend.abs(*args, **kwargs)
+        return self.backend.abs(*args, **kwargs)
 
     def absolute(self, *args, **kwargs):
-        return self._backend.absolute(*args, **kwargs)
+        return self.backend.absolute(*args, **kwargs)
 
     def any(self, *args, **kwargs):
-        return self._backend.any(*args, **kwargs)
+        return self.backend.any(*args, **kwargs)
 
     def apply_along_axis(self, *args, **kwargs):
-        return self._backend.apply_along_axis(*args, **kwargs)
+        return self.backend.apply_along_axis(*args, **kwargs)
 
     def apply_over_axes(self, *args, **kwargs):
-        return self._backend.apply_over_axes(*args, **kwargs)
+        return self.backend.apply_over_axes(*args, **kwargs)
 
     def arange(self, *args, **kwargs):
-        return self._backend.arange(*args, **kwargs)
+        return self.backend.arange(*args, **kwargs)
 
     def array(self, *args, **kwargs):
-        return self._backend.array(*args, **kwargs)
+        return self.backend.array(*args, **kwargs)
 
     def array_equal(self, *args, **kwargs):
-        return self._backend.array_equal(*args, **kwargs)
+        return self.backend.array_equal(*args, **kwargs)
 
     def asarray(self, *args, **kwargs):
-        return self._backend.asarray(*args, **kwargs)
+        return self.backend.asarray(*args, **kwargs)
 
     def atleast_1d(self, *args, **kwargs):
-        return self._backend.atleast_1d(*args, **kwargs)
+        return self.backend.atleast_1d(*args, **kwargs)
 
     def atleast_2d(self, *args, **kwargs):
-        return self._backend.atleast_2d(*args, **kwargs)
+        return self.backend.atleast_2d(*args, **kwargs)
 
     def convolve(self, *args, **kwargs):
-        return self._backend.convolve(*args, **kwargs)
+        return self.backend.convolve(*args, **kwargs)
+    
+    def cos(self, *args, **kwargs):
+        return self.backend.cos(*args, **kwargs)
 
     def diag(self, *args, **kwargs):
-        return self._backend.diag(*args, **kwargs)
+        return self.backend.diag(*args, **kwargs)
 
     def dot(self, *args, **kwargs):
-        return self._backend.dot(*args, **kwargs)
+        return self.backend.dot(*args, **kwargs)
 
     def dtype(self, *args, **kwargs):
-        return self._backend.dtype(*args, **kwargs)
+        return self.backend.dtype(*args, **kwargs)
 
     def empty(self, *args, **kwargs):
-        return self._backend.empty(*args, **kwargs)
+        return self.backend.empty(*args, **kwargs)
 
     def empty_like(self, *args, **kwargs):
-        return self._backend.empty_like(*args, **kwargs)
+        return self.backend.empty_like(*args, **kwargs)
 
     def exp(self, *args, **kwargs):
-        return self._backend.exp(*args, **kwargs)
+        return self.backend.exp(*args, **kwargs)
 
     def fromiter(self, *args, **kwargs):
-        return self._backend.fromiter(*args, **kwargs)
+        return self.backend.fromiter(*args, **kwargs)
 
     def lib_stride_tricks_as_strided(self, *args, **kwargs):
-        return self._backend.lib_stride_tricks_as_strided(*args, **kwargs)
+        return self.backend.lib_stride_tricks_as_strided(*args, **kwargs)
 
     def linspace(self, *args, **kwargs):
-        return self._backend.linspace(*args, **kwargs)
+        return self.backend.linspace(*args, **kwargs)
 
     def log(self, *args, **kwargs):
-        return self._backend.log(*args, **kwargs)
+        return self.backend.log(*args, **kwargs)
 
     def log2(self, *args, **kwargs):
-        return self._backend.log2(*args, **kwargs)
+        return self.backend.log2(*args, **kwargs)
 
     def mat(self, *args, **kwargs):
-        return self._backend.mat(*args, **kwargs)
+        return self.backend.mat(*args, **kwargs)
 
     def max(self, *args, **kwargs):
-        return self._backend.max(*args, **kwargs)
+        return self.backend.max(*args, **kwargs)
 
     def min(self, *args, **kwargs):
-        return self._backend.min(*args, **kwargs)
+        return self.backend.min(*args, **kwargs)
 
     def ndarray(self, *args, **kwargs):
-        return self._backend.ndarray(*args, **kwargs)
+        return self.backend.ndarray(*args, **kwargs)
 
     def nonzero(self, *args, **kwargs):
-        return self._backend.nonzero(*args, **kwargs)
+        return self.backend.nonzero(*args, **kwargs)
 
     def ones(self, *args, **kwargs):
-        return self._backend.ones(*args, **kwargs)
+        return self.backend.ones(*args, **kwargs)
 
     def ones_like(self, *args, **kwargs):
-        return self._backend.ones_like(*args, **kwargs)
+        return self.backend.ones_like(*args, **kwargs)
 
     def power(self, *args, **kwargs):
-        return self._backend.power(*args, **kwargs)
+        return self.backend.power(*args, **kwargs)
 
     def savetxt(self, *args, **kwargs):
-        return self._backend.savetxt(*args, **kwargs)
+        return self.backend.savetxt(*args, **kwargs)
 
     def set_printoptions(self, *args, **kwargs):
-        return self._backend.set_printoptions(*args, **kwargs)
+        return self.backend.set_printoptions(*args, **kwargs)
+    
+    def sin(self, *args, **kwargs):
+        return self.backend.sin(*args, **kwargs)
 
     def squeeze(self, *args, **kwargs):
-        return self._backend.squeeze(*args, **kwargs)
+        return self.backend.squeeze(*args, **kwargs)
 
     def sum(self, *args, **kwargs):
-        return self._backend.sum(*args, **kwargs)
+        return self.backend.sum(*args, **kwargs)
 
     def tan(self, *args, **kwargs):
-        return self._backend.tan(*args, **kwargs)
+        return self.backend.tan(*args, **kwargs)
 
     def union1d(self, *args, **kwargs):
-        return self._backend.union1d(*args, **kwargs)
+        return self.backend.union1d(*args, **kwargs)
 
     def vectorize(self, *args, **kwargs):
-        return self._backend.vectorize(*args, **kwargs)
+        return self.backend.vectorize(*args, **kwargs)
 
     def where(self, *args, **kwargs):
-        return self._backend.where(*args, **kwargs)
+        return self.backend.where(*args, **kwargs)
 
     def zeros(self, *args, **kwargs):
-        return self._backend.zeros(*args, **kwargs)
+        return self.backend.zeros(*args, **kwargs)
 
     def zeros_like(self, *args, **kwargs):
-        return self._backend.zeros_like(*args, **kwargs)
+        return self.backend.zeros_like(*args, **kwargs)
 
 
 class BackendBase:
@@ -188,6 +199,9 @@ class NumpyBackend(BackendBase):
             )
 
         self.np = np
+
+        # Constants
+        self.pi = np.pi
 
     def abs(self, *args, **kwargs):
         return self.np.abs(*args, **kwargs)
@@ -224,6 +238,9 @@ class NumpyBackend(BackendBase):
 
     def convolve(self, *args, **kwargs):
         return self.np.convolve(*args, **kwargs)
+    
+    def cos(self, *args, **kwargs):
+        return self.np.cos(*args, **kwargs)
 
     def diag(self, *args, **kwargs):
         return self.np.diag(*args, **kwargs)
@@ -287,6 +304,9 @@ class NumpyBackend(BackendBase):
 
     def set_printoptions(self, *args, **kwargs):
         return self.np.set_printoptions(*args, **kwargs)
+    
+    def sin(self, *args, **kwargs):
+        return self.np.sin(*args, **kwargs)
 
     def squeeze(self, *args, **kwargs):
         return self.np.squeeze(*args, **kwargs)

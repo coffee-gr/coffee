@@ -9,14 +9,13 @@ Created by Chris Stevens 2023
 """
 
 # Import Python libraries
-import numpy as np
-
+from coffee.settings import be
 from coffee.tslices import tslices
 from coffee.system import System
 
 # A simple bump function for the boundary condition
 def bump(t):
-	return np.sin(8.*t)**7.
+	return be.sin(8.*t)**7.
 
 # Class that describes a simple advection equation
 class OneDAdvection(System):
@@ -77,7 +76,7 @@ class OneDAdvection(System):
 
 		# Set initial data
 		x   = grid.meshes[0]
-		Psi = np.zeros_like(x)
+		Psi = be.zeros_like(x)
 
 		# Return Timeslice object
 		return tslices.TimeSlice([Psi], grid, time = t0)

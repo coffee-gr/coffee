@@ -7,7 +7,7 @@ of the complete domain to each
 from builtins import range
 from builtins import object
 import abc
-from coffee.backend import backend as be
+from coffee.settings import be
 
 
 ###############################################################################

@@ -6,7 +6,7 @@ A module to manage summation by parts finite difference operators.
 
 import math
 import logging
-from coffee.backend import backend as be
+from coffee.settings import be
 
 ################################################################################
 # Base class for SBP operators

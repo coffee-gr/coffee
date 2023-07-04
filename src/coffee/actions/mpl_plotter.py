@@ -3,7 +3,7 @@ import time
 
 # from pylab import *
 import pylab
-from coffee.backend import backend as be
+from coffee.settings import be
 
 from coffee.actions import Prototype
 

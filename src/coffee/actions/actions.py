@@ -1,5 +1,5 @@
 from builtins import object
-from coffee.backend import backend as be
+from coffee.settings import be
 
 
 class Prototype(object):

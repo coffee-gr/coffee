@@ -10,7 +10,7 @@ method for some kind of new data type in a sub class of SimOutputType and
 """
 from builtins import str
 from builtins import object
-from coffee.backend import backend as be
+from coffee.settings import be
 
 from .actions import Prototype
 from ..io.simulation_data import dgTypes, systemD, DataGroup, sysDTypes
