@@ -142,6 +142,7 @@ hdf_file = h5py.File(filename, "w")
 output_actions = [
     actions.SimOutput.Data(),
     actions.SimOutput.Times(),
+    actions.SimOutput.System(),
     actions.SimOutput.Domains()
     ]
 
