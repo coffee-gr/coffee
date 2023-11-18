@@ -57,7 +57,6 @@ def Compute_Gmn(alm, Gmn, DD, s, lmax, smax, Sampling_on_torus_theta, Sampling_o
             n += 1
             l = Sup(Sup(abss, n), Sup(abss, m))
             while l <= lmax:
-                print(m, n, l)
                 if Tolerance < abs(DD[1][l][pindex(smax, s)][m][n]):
                     Gmn[m * Sampling_on_torus_phi + n] += DD[1][l][pindex(smax, s)][m][n] * alm[l * (l + 1) + n]
                     Gmn[m * Sampling_on_torus_phi + (Sampling_on_torus_phi - n)] += DD[1][l][pindex(smax, s)][m][
