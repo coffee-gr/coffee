@@ -65,6 +65,9 @@ class Backend:
 
     def arange(self, *args, **kwargs):
         return self.backend.arange(*args, **kwargs)
+    
+    def around(self, *args, **kwargs):
+        return self.backend.around(*args, **kwargs)
 
     def array(self, *args, **kwargs):
         return self.backend.array(*args, **kwargs)
@@ -83,6 +86,9 @@ class Backend:
 
     def convolve(self, *args, **kwargs):
         return self.backend.convolve(*args, **kwargs)
+    
+    def copy(self, *args, **kwargs):
+        return self.backend.copy(*args, **kwargs)
     
     def cos(self, *args, **kwargs):
         return self.backend.cos(*args, **kwargs)
@@ -125,6 +131,9 @@ class Backend:
 
     def max(self, *args, **kwargs):
         return self.backend.max(*args, **kwargs)
+    
+    def meshgrid(self, *args, **kwargs):
+        return self.backend.meshgrid(*args, **kwargs)
 
     def min(self, *args, **kwargs):
         return self.backend.min(*args, **kwargs)
@@ -143,6 +152,12 @@ class Backend:
 
     def power(self, *args, **kwargs):
         return self.backend.power(*args, **kwargs)
+    
+    def real(self, *args, **kwargs):
+        return self.backend.real(*args, **kwargs)
+    
+    def reshape(self, *args, **kwargs):
+        return self.backend.reshape(*args, **kwargs)
 
     def savetxt(self, *args, **kwargs):
         return self.backend.savetxt(*args, **kwargs)
@@ -152,6 +167,9 @@ class Backend:
     
     def sin(self, *args, **kwargs):
         return self.backend.sin(*args, **kwargs)
+    
+    def sqrt(self, *args, **kwargs):
+        return self.backend.sqrt(*args, **kwargs)
 
     def squeeze(self, *args, **kwargs):
         return self.backend.squeeze(*args, **kwargs)
@@ -203,6 +221,16 @@ class NumpyBackend(BackendBase):
         # Constants
         self.pi = np.pi
 
+        # Datatypes
+        self.float64 = np.float64
+        self.complex128 = np.complex128
+
+        # Array class
+        self.ndarray = np.ndarray
+
+        # Misc
+        self.index_exp = np.index_exp
+
     def abs(self, *args, **kwargs):
         return self.np.abs(*args, **kwargs)
 
@@ -220,6 +248,9 @@ class NumpyBackend(BackendBase):
 
     def arange(self, *args, **kwargs):
         return self.np.arange(*args, **kwargs)
+    
+    def around(self, *args, **kwargs):
+        return self.np.around(*args, **kwargs)
 
     def array(self, *args, **kwargs):
         return self.np.array(*args, **kwargs)
@@ -238,6 +269,9 @@ class NumpyBackend(BackendBase):
 
     def convolve(self, *args, **kwargs):
         return self.np.convolve(*args, **kwargs)
+    
+    def copy(self, *args, **kwargs):
+        return self.np.copy(*args, **kwargs)
     
     def cos(self, *args, **kwargs):
         return self.np.cos(*args, **kwargs)
@@ -280,6 +314,9 @@ class NumpyBackend(BackendBase):
 
     def max(self, *args, **kwargs):
         return self.np.max(*args, **kwargs)
+    
+    def meshgrid(self, *args, **kwargs):
+        return self.np.meshgrid(*args, **kwargs)
 
     def min(self, *args, **kwargs):
         return self.np.min(*args, **kwargs)
@@ -298,6 +335,12 @@ class NumpyBackend(BackendBase):
 
     def power(self, *args, **kwargs):
         return self.np.power(*args, **kwargs)
+    
+    def real(self, *args, **kwargs):
+        return self.np.real(*args, **kwargs)
+    
+    def reshape(self, *args, **kwargs):
+        return self.np.reshape(*args, **kwargs)
 
     def savetxt(self, *args, **kwargs):
         return self.np.savetxt(*args, **kwargs)
@@ -307,6 +350,9 @@ class NumpyBackend(BackendBase):
     
     def sin(self, *args, **kwargs):
         return self.np.sin(*args, **kwargs)
+    
+    def sqrt(self, *args, **kwargs):
+        return self.np.sqrt(*args, **kwargs)
 
     def squeeze(self, *args, **kwargs):
         return self.np.squeeze(*args, **kwargs)
