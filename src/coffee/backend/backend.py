@@ -17,6 +17,11 @@ class Backend:
         # Set constants
         self.pi = self.backend.pi
 
+        # Enable JAX to 64bit if chosen
+        if backend_name == "jax":
+            from jax import config
+            config.update("jax_enable_x64", True)
+
         # Return backend instance
         return self.backend
 
@@ -40,6 +45,7 @@ class Backend:
         """
         backends = {
             "numpy": NumpyBackend,
+            "jax": JAXBackend,
             # Add other backends here as needed
         }
 
@@ -218,6 +224,9 @@ class NumpyBackend(BackendBase):
 
         self.np = np
 
+        # Name
+        self.name = "numpy"
+
         # Constants
         self.pi = np.pi
 
@@ -380,5 +389,189 @@ class NumpyBackend(BackendBase):
 
     def lib_stride_tricks_as_strided(self, x, shape=None, strides=None, writeable=True):
         return self.np.lib.stride_tricks.as_strided(
+            x, shape=shape, strides=strides, writeable=writeable
+        )
+    
+# ################################################################################
+# # JAX implementation
+# ################################################################################
+
+class JAXBackend(BackendBase):
+    def __init__(self):
+        # print("Initialising JAX Backend")
+        try:
+            import jax.numpy as jnp
+        except ImportError:
+            raise ImportError(
+                "JAX library is not installed. Please install JAX to use this function."
+            )
+
+        self.jnp = jnp
+
+        # Name
+        self.name = "jax"
+
+        # Constants
+        self.pi = jnp.pi
+
+        # Datatypes
+        self.float64 = jnp.float64
+        self.complex128 = jnp.complex128
+
+        # Array class
+        self.ndarray = jnp.ndarray
+
+        # Misc
+        self.index_exp = jnp.index_exp
+
+    def abs(self, *args, **kwargs):
+        return self.jnp.abs(*args, **kwargs)
+
+    def absolute(self, *args, **kwargs):
+        return self.jnp.absolute(*args, **kwargs)
+
+    def any(self, *args, **kwargs):
+        return self.jnp.any(*args, **kwargs)
+
+    def apply_along_axis(self, *args, **kwargs):
+        return self.jnp.apply_along_axis(*args, **kwargs)
+
+    def apply_over_axes(self, *args, **kwargs):
+        return self.jnp.apply_over_axes(*args, **kwargs)
+
+    def arange(self, *args, **kwargs):
+        return self.jnp.arange(*args, **kwargs)
+    
+    def around(self, *args, **kwargs):
+        return self.jnp.around(*args, **kwargs)
+
+    def array(self, *args, **kwargs):
+        return self.jnp.array(*args, **kwargs)
+
+    def array_equal(self, *args, **kwargs):
+        return self.jnp.array_equal(*args, **kwargs)
+
+    def asarray(self, *args, **kwargs):
+        return self.jnp.asarray(*args, **kwargs)
+
+    def atleast_1d(self, *args, **kwargs):
+        return self.jnp.atleast_1d(*args, **kwargs)
+
+    def atleast_2d(self, *args, **kwargs):
+        return self.jnp.atleast_2d(*args, **kwargs)
+
+    def convolve(self, *args, **kwargs):
+        return self.jnp.convolve(*args, **kwargs)
+    
+    def copy(self, *args, **kwargs):
+        return self.jnp.copy(*args, **kwargs)
+    
+    def cos(self, *args, **kwargs):
+        return self.jnp.cos(*args, **kwargs)
+
+    def diag(self, *args, **kwargs):
+        return self.jnp.diag(*args, **kwargs)
+
+    def dot(self, *args, **kwargs):
+        return self.jnp.dot(*args, **kwargs)
+
+    def dtype(self, *args, **kwargs):
+        return self.jnp.dtype(*args, **kwargs)
+
+    def empty(self, *args, **kwargs):
+        return self.jnp.empty(*args, **kwargs)
+
+    def empty_like(self, *args, **kwargs):
+        return self.jnp.empty_like(*args, **kwargs)
+
+    def exp(self, *args, **kwargs):
+        return self.jnp.exp(*args, **kwargs)
+
+    def fromiter(self, *args, **kwargs):
+        return self.jnp.fromiter(*args, **kwargs)
+
+    def lib_stride_tricks_as_strided(self, *args, **kwargs):
+        return self.jnp.lib_stride_tricks_as_strided(*args, **kwargs)
+
+    def linspace(self, *args, **kwargs):
+        return self.jnp.linspace(*args, **kwargs)
+
+    def log(self, *args, **kwargs):
+        return self.jnp.log(*args, **kwargs)
+
+    def log2(self, *args, **kwargs):
+        return self.jnp.log2(*args, **kwargs)
+
+    def mat(self, *args, **kwargs):
+        return self.jnp.mat(*args, **kwargs)
+
+    def max(self, *args, **kwargs):
+        return self.jnp.max(*args, **kwargs)
+    
+    def meshgrid(self, *args, **kwargs):
+        return self.jnp.meshgrid(*args, **kwargs)
+
+    def min(self, *args, **kwargs):
+        return self.jnp.min(*args, **kwargs)
+
+    def ndarray(self, *args, **kwargs):
+        return self.jnp.ndarray(*args, **kwargs)
+
+    def nonzero(self, *args, **kwargs):
+        return self.jnp.nonzero(*args, **kwargs)
+
+    def ones(self, *args, **kwargs):
+        return self.jnp.ones(*args, **kwargs)
+
+    def ones_like(self, *args, **kwargs):
+        return self.jnp.ones_like(*args, **kwargs)
+
+    def power(self, *args, **kwargs):
+        return self.jnp.power(*args, **kwargs)
+    
+    def real(self, *args, **kwargs):
+        return self.jnp.real(*args, **kwargs)
+    
+    def reshape(self, *args, **kwargs):
+        return self.jnp.reshape(*args, **kwargs)
+
+    def savetxt(self, *args, **kwargs):
+        return self.jnp.savetxt(*args, **kwargs)
+
+    def set_printoptions(self, *args, **kwargs):
+        return self.jnp.set_printoptions(*args, **kwargs)
+    
+    def sin(self, *args, **kwargs):
+        return self.jnp.sin(*args, **kwargs)
+    
+    def sqrt(self, *args, **kwargs):
+        return self.jnp.sqrt(*args, **kwargs)
+
+    def squeeze(self, *args, **kwargs):
+        return self.jnp.squeeze(*args, **kwargs)
+
+    def sum(self, *args, **kwargs):
+        return self.jnp.sum(*args, **kwargs)
+
+    def tan(self, *args, **kwargs):
+        return self.jnp.tan(*args, **kwargs)
+
+    def union1d(self, *args, **kwargs):
+        return self.jnp.union1d(*args, **kwargs)
+
+    def vectorize(self, *args, **kwargs):
+        return self.jnp.vectorize(*args, **kwargs)
+
+    def where(self, *args, **kwargs):
+        return self.jnp.where(*args, **kwargs)
+
+    def zeros(self, *args, **kwargs):
+        return self.jnp.zeros(*args, **kwargs)
+
+    def zeros_like(self, *args, **kwargs):
+        return self.jnp.zeros_like(*args, **kwargs)
+
+    def lib_stride_tricks_as_strided(self, x, shape=None, strides=None, writeable=True):
+        return self.jnp.lib.stride_tricks.as_strided(
             x, shape=shape, strides=strides, writeable=writeable
         )

@@ -1,0 +1,7 @@
+1. Install Docker container from here:
+
+https://catalog.ngc.nvidia.com/orgs/nvidia/containers/tensorflow
+
+2. Run the container and mount the local directory via
+
+docker run --gpus all -it -v "/home/chris/Dropbox (UC Enterprise)/Repos/coffee":/workspace/coffee --rm coffee
